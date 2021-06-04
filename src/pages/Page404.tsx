@@ -1,9 +1,13 @@
 import { NOT_FOUND_PAGE_MESSAGES } from "../enums/404.enum";
+import Button from '../components/Button';
+import { useHistory } from 'react-router-dom';
 
 
 export default function Navbar(props: any) {
+    const history = useHistory();
+
     const handleOnClick = () => {
-        console.log('404-action-clicked');
+        history.push('/');
     }
 
     return (
@@ -11,11 +15,10 @@ export default function Navbar(props: any) {
           <h1 className="404-title">
               {NOT_FOUND_PAGE_MESSAGES.TITLE}
           </h1>
-          <button
-            onClick={() => handleOnClick}
-            className="404-action">
-              {NOT_FOUND_PAGE_MESSAGES.BODY}
-          </button>
+          <Button
+            type="primary"
+            text={NOT_FOUND_PAGE_MESSAGES.ACTION}
+            onClick={handleOnClick}/>
       </div>
     );
 }
