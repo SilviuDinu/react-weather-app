@@ -1,4 +1,4 @@
-export default middleware = {
+module.exports = middleware = {
   directives: {
     defaultSrc: ["'self'"],
     styleSrc: ["'self'", "'unsafe-inline'", 'unpkg.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'use.fontawesome.com'],

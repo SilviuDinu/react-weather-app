@@ -1,11 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import './App.scss';
+import Home from './pages/Home';
+import Navbar from './components/Navbar';
+import About from './pages/About';
+import Body from './components/Body';
 
 function App() {
   return (
     <div className="App">
-     <h1>Hello</h1>
+      <Router>
+        <Navbar />
+        <Body>
+          <Switch>
+            {/* @ts-ignore */}
+            <Route exact path="/" component={Home}></Route>
+            {/* @ts-ignore */}
+            <Route exact path="/about" component={About}></Route>
+          </Switch>
+        </Body>
+      </Router>
     </div>
   );
 }
