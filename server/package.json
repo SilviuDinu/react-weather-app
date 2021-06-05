@@ -9,22 +9,22 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "helmet": "^4.1.1",
     "helmet-csp": "^3.1.0",
-    "mongodb": "^3.6.2",
-    "monk": "^7.3.2",
+    "http": "0.0.1-security",
     "morgan": "^1.10.0",
     "nanoid": "^3.1.12",
-    "newsapi": "^2.4.1",
-    "nodemon": "^2.0.5",
-    "vue": "^2.6.12",
-    "yup": "^0.29.3"
+    "nodemon": "^2.0.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "react-app-rewire-alias": "^1.0.3",
+    "react-app-rewired": "^2.1.8"
+  },
   "author": "Silviu Dinu",
   "license": "ISC"
 }
