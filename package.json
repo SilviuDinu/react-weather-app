@@ -12,7 +12,6 @@
     "@types/node": "^12.20.14",
     "@types/react": "^17.0.9",
     "@types/react-dom": "^17.0.6",
-    "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "moment": "^2.29.1",
     "node-sass": "^6.0.0",

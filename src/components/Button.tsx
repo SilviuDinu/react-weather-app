@@ -1,9 +1,13 @@
 export default function Button(props: any) {
-    return (
-     <button
-        className={'btn ' + props.type}
-        onClick={props.onClick}>
-         {props.text}
-     </button>
-    );
+  const { isSubmitButton = false } = props;
+  const buttonType = isSubmitButton ? "submit" : undefined;
+  return (
+    <button
+      type={buttonType}
+      className={"btn " + props.type}
+      onClick={props.onClick}
+    >
+      {props.text}
+    </button>
+  );
 }

@@ -1,0 +1,6 @@
+{
+  "trailingComma": "es5",
+  "html.format.wrapAttributes": "force-aligned",
+  "singleAttributePerLine": true,
+  "prettier.tabWidth": 4
+}

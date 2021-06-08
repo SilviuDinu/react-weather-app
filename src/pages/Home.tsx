@@ -1,32 +1,102 @@
-import { ENDPOINTS } from '@enums/endpoints.enum';
-import { HOME_MESSAGES } from '@enums/home.enum';
-import { CurrentCityWeather, Weather } from '@models/current-weather';
-import { useEffect, useState } from 'react';
+import { ENDPOINTS } from "@enums/endpoints.enum";
+import { HOME_MESSAGES } from "@enums/home.enum";
+import { FORM_DATA } from "@enums/search-form.enum";
+import { CurrentCityWeather } from "@models/current-weather";
+import { useEffect, useState } from "react";
+import SearchForm from "@components/SearchForm";
+import { SearchParams } from "@models/search-params";
+
+const formData = {
+  input: {
+    placeholder: FORM_DATA.PLACEHOLDER,
+    ariaLabel: FORM_DATA.ARIA_LABEL,
+    class: "city-search-form-input",
+  },
+  buttonText: FORM_DATA.BUTTON_TEXT,
+  class: "city-search-form",
+};
+
+const getData = (): Promise<any> => {
+  return fetch(ENDPOINTS.MOCK_ALL, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+};
 
 export default function Home(props: any) {
   const [weather, setWeather] = useState<CurrentCityWeather[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [searchParams, setSearchParams] = useState<SearchParams>({
+    searchValue: "",
+    lat: NaN,
+    long: NaN,
+    submitted: false,
+  });
 
   useEffect(() => {
-    fetch(ENDPOINTS.MOCK_ALL, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then((response: any) => response.json())
-      .then((response: CurrentCityWeather[]) => {
-        setWeather(weather => [...weather, ...response]);
-      })
-      .catch(err => {
-        throw new Error(err);
-      })
-  }, []);
+    if (searchParams.submitted && !loading) {
+      setLoading(true);
+      getData()
+        .then((response: any) => response.json())
+        .then((response: CurrentCityWeather[]) => {
+          setWeather((weather) => [...weather, ...response]);
+        })
+        .catch((err) => {
+          throw new Error(err);
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [searchParams.submitted]);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      setSearchParams((searchParams: SearchParams) => {
+        return {
+          ...searchParams,
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        };
+      });
+    });
+
+    console.log("Latitude is:", searchParams.lat);
+    console.log("Longitude is:", searchParams.long);
+  }, [searchParams.lat, searchParams.long]);
+
+  const onInputChange = (e: Event): void => {
+    const val = (e.target as HTMLTextAreaElement).value || "";
+    setSearchParams({
+      ...searchParams,
+      submitted: false,
+      searchValue: val,
+    });
+  };
+
+  const onFormSubmit = (e: Event): void => {
+    if (e) {
+      e.preventDefault();
+    }
+    setSearchParams({
+      ...searchParams,
+      submitted: true,
+    });
+  };
 
   return (
     <div className="home-page">
       <h1 className="home-page-title">{HOME_MESSAGES.TITLE}</h1>
       <div className="home-page-content">
-        {weather.map((item: CurrentCityWeather, index: number) => (
-          <p key={index}>{item.name}</p>
-        ))}
+        <SearchForm
+          form={formData}
+          inputValue={searchParams.searchValue}
+          onInputChange={onInputChange}
+          onFormSubmit={onFormSubmit}
+        />
+        {!loading
+          ? weather.map((item: CurrentCityWeather, index: number) => (
+              <p key={index}>{item.name}</p>
+            ))
+          : "Loading"}
       </div>
     </div>
   );
