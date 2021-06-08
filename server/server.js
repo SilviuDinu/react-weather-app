@@ -49,3 +49,9 @@ app.get('/mockapi/current/all', (req, res) => {
     res.status(400).send({ error: 'Something went wrong with the mock' });
   }
 });
+
+app.get('/mockapi/current/city', (req, res) => {
+  const { cityName } = req.query;
+  const result = current_weather.find((item) => item.name = cityName);
+  res.json([result]);
+});

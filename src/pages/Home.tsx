@@ -5,19 +5,22 @@ import { CurrentCityWeather } from "@models/current-weather";
 import { useEffect, useState } from "react";
 import SearchForm from "@components/SearchForm";
 import { SearchParams } from "@models/search-params";
+import { buildSearchParams } from '@utils/helpers';
 
 const formData = {
   input: {
     placeholder: FORM_DATA.PLACEHOLDER,
     ariaLabel: FORM_DATA.ARIA_LABEL,
     class: "city-search-form-input",
+    autoComplete: false,
   },
   buttonText: FORM_DATA.BUTTON_TEXT,
   class: "city-search-form",
 };
 
-const getData = (): Promise<any> => {
-  return fetch(ENDPOINTS.MOCK_ALL, {
+const getData = (params: any): Promise<any> => {
+  const query = buildSearchParams(params);
+  return fetch(ENDPOINTS.MOCK_CITY + query, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
@@ -33,34 +36,43 @@ export default function Home(props: any) {
     submitted: false,
   });
 
-  useEffect(() => {
+  useEffect((): any => {
+    let isSubscribed = true;
     if (searchParams.submitted && !loading) {
       setLoading(true);
-      getData()
+      getData({ cityName: searchParams.searchValue, units: 'imperial' })
         .then((response: any) => response.json())
         .then((response: CurrentCityWeather[]) => {
-          setWeather((weather) => [...weather, ...response]);
+          if (isSubscribed) {
+            setWeather((weather) => [...weather, ...response]);
+          }
         })
         .catch((err) => {
           throw new Error(err);
         })
-        .finally(() => setLoading(false));
+        .finally(() => (isSubscribed ? setLoading(false) : null));
     }
+
+    return () => (isSubscribed = false);
   }, [searchParams.submitted]);
 
-  useEffect(() => {
+  useEffect((): any => {
+    let isSubscribed = true;
     navigator.geolocation.getCurrentPosition(function (position) {
-      setSearchParams((searchParams: SearchParams) => {
-        return {
-          ...searchParams,
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
-        };
-      });
+      if (isSubscribed) {
+        setSearchParams((searchParams: SearchParams) => {
+          return {
+            ...searchParams,
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+          };
+        });
+      }
     });
 
     console.log("Latitude is:", searchParams.lat);
     console.log("Longitude is:", searchParams.long);
+    return () => (isSubscribed = false);
   }, [searchParams.lat, searchParams.long]);
 
   const onInputChange = (e: Event): void => {
