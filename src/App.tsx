@@ -28,26 +28,26 @@ function App() {
       <Router>
         <Navbar />
         <Body>
-          <SearchParamsProvider>
-            <WeatherProvider>
-              <Switch>
-                {/* @ts-ignore */}
-                <Route exact path="/">
+          <WeatherProvider>
+            <Switch>
+              {/* @ts-ignore */}
+              <Route exact path="/">
+                <SearchParamsProvider>
                   <Home>
                     <SearchForm form={formData} />
                     <CardGroup />
                   </Home>
-                </Route>
-                {/* @ts-ignore */}
-                <Route exact path="/about">
-                  <About />
-                </Route>
-                <Route path="*">
-                  <Page404 />
-                </Route>
-              </Switch>
-            </WeatherProvider>
-          </SearchParamsProvider>
+                </SearchParamsProvider>
+              </Route>
+              {/* @ts-ignore */}
+              <Route exact path="/about">
+                <About />
+              </Route>
+              <Route path="*">
+                <Page404 />
+              </Route>
+            </Switch>
+          </WeatherProvider>
         </Body>
       </Router>
     </div>

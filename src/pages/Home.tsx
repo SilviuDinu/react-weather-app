@@ -1,22 +1,16 @@
-import { ENDPOINTS } from "@enums/endpoints.enum";
 import { HOME_MESSAGES } from "@enums/home.enum";
 import { CurrentCityWeather } from "@models/current-weather";
+import Notification from "@components/Notification";
+import { Notification as NotificationModel } from "@models/notification";
 import { SearchParams } from "@models/search-params";
 import { SearchParamsContext } from "@providers/SearchParamsContext";
 import { WeatherContext } from "@providers/WeatherContext";
-import { buildSearchParams } from "@utils/helpers";
+import { getLocationByCoords, getWeatherByCity } from "@utils/helpers";
 import { useContext, useEffect, useState } from "react";
-
-const getData = (params: any): Promise<any> => {
-  const query = buildSearchParams(params);
-  return fetch(ENDPOINTS.MOCK_CITY + query, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
-};
 
 export default function Home(props: any) {
   const [loading, setLoading] = useState<boolean>(false);
+  const [notification, setNotification] = useState<NotificationModel>();
   const [searchParams, setSearchParams] = useContext(SearchParamsContext);
   const [weather, setWeather] = useContext(WeatherContext);
 
@@ -27,7 +21,7 @@ export default function Home(props: any) {
     );
     if (searchParams.submitted && !loading && !exists) {
       setLoading(true);
-      getData({ cityName: searchParams.searchValue, units: "imperial" })
+      getWeatherByCity({ cityName: searchParams.searchValue, units: "metric" })
         .then((response: any) => response.json())
         .then((response: CurrentCityWeather[]) => {
           if (isSubscribed) {
@@ -42,8 +36,12 @@ export default function Home(props: any) {
             });
           }
         })
-        .catch((err) => {
-          throw new Error(err);
+        .catch((err: any) => {
+          setNotification({
+            type: "error",
+            message: err.error,
+            isVisible: true,
+          });
         })
         .finally(() => (isSubscribed ? setLoading(false) : null));
     }
@@ -55,6 +53,7 @@ export default function Home(props: any) {
 
   useEffect((): any => {
     let isSubscribed = true;
+    const queryObj = { lat: searchParams.lat, long: searchParams.long };
     navigator.geolocation.getCurrentPosition(function (position) {
       if (isSubscribed) {
         setSearchParams((searchParams: SearchParams) => {
@@ -64,6 +63,18 @@ export default function Home(props: any) {
             long: position.coords.longitude,
           };
         });
+        getLocationByCoords(queryObj)
+          .then((response: any) => response.json())
+          .then((response: any) => {
+            console.log(response);
+          })
+          .catch((err) => {
+            setNotification({
+              type: "error",
+              message: err.error,
+              isVisible: true,
+            });
+          });
       }
     });
 
@@ -75,6 +86,11 @@ export default function Home(props: any) {
   return (
     <div className="home-page">
       <h1 className="home-page-title">{HOME_MESSAGES.TITLE}</h1>
+      <Notification
+        isVisible={notification?.isVisible}
+        type={notification?.type}
+        message={notification?.message}
+      />
       <div className="home-page-content">{props.children}</div>
     </div>
   );
