@@ -1,7 +1,12 @@
 export enum ENDPOINTS {
-    MOCK_GET_ALL = '/mockapi/current/all',
-    MOCK_GET_CITY = '/mockapi/current/city',
-    MOCK_HET_LOCATION_BY_COORDS = '/mockapi/current/location',
     GET_CITY = '/api/current/city',
-    GET_LOCATION_BY_COORDS = '/api/current/location'
+    GET_LOCATION_BY_COORDS = '/api/current/location',
+    GET_WEATHER_BY_COORDS = '/api/current/coords'
+}
+
+export enum MOCK_ENDPOINTS {
+    GET_ALL = '/mockapi/current/all',
+    GET_CITY = '/mockapi/current/city',
+    GET_LOCATION_BY_COORDS = '/mockapi/current/location',
+    GET_WEATHER_BY_COORDS = '/mockapi/current/coords',
 }

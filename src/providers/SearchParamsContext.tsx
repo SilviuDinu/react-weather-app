@@ -1,10 +1,10 @@
 import { SearchParams } from "@models/search-params";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 const defaultValue = {
   searchValue: "",
-  lat: NaN,
-  long: NaN,
+  lat: null,
+  long: null,
   submitted: false,
 };
 

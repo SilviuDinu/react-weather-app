@@ -2,6 +2,7 @@ import { CurrentCityWeather } from "@models/current-weather";
 import { WeatherContext } from "@providers/WeatherContext";
 import Card from "@components/Card";
 import { useContext } from "react";
+import Loader from "@components/Loader";
 
 export default function CardGroup(props: any) {
   const [weather] = useContext(WeatherContext);

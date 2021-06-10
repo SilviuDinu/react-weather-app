@@ -23,6 +23,7 @@ export default function SearchForm(props: any) {
       ...searchParams,
       submitted: true,
     });
+    
   };
 
   return (

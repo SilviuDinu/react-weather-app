@@ -44,6 +44,20 @@ app.get("/api/current/city", (req, res) => {
     });
 });
 
+app.get("/api/current/coords", (req, res) => {
+  const { lat, long, units = "metric" } = req.query;
+  axios
+    .get(
+      `https://${BASE_URL}?lat=${lat}&lon=${lon}&units=${units}&appid=${API_KEY}`
+    )
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch((error) => {
+      res.status(400).send({ error });
+    });
+});
+
 app.get("/api/current/location", (req, res) => {
   const { lat, long, sensor = true } = req.query;
   const latlng = [lat, long].join(",");
@@ -70,6 +84,7 @@ app.get("/mockapi/current/all", (req, res) => {
 
 app.get("/mockapi/current/city", (req, res) => {
   const { cityName } = req.query;
+  console.log(cityName)
   const result = current_weather.find(
     (item) => item.name.toLowerCase() === cityName.toLowerCase()
   );
@@ -88,4 +103,16 @@ app.get("/mockapi/current/location", (req, res) => {
       .status(400)
       .send({ error: "Something went wrong while getting your location" });
   }
+});
+
+app.get("/mockapi/current/coords", (req, res) => {
+  const { lat, long } = req.query;
+  const result = current_weather.find(
+    (item) =>
+      Math.abs(parseFloat(item.coord.lat, 3) - parseFloat(lat, 3)) < 0.05 &&
+      Math.abs(parseFloat(item.coord.lon, 3) - parseFloat(long, 3)) < 0.05
+  );
+  result
+    ? res.json([result])
+    : res.status(400).send({ error: `Could not find ${cityName}` });
 });
