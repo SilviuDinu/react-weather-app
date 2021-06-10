@@ -113,6 +113,8 @@
           padding: 8px;
 
           @media (max-width: 768px) {
+            height: 100%;
+            margin-top: 32px;
             flex-direction: column;
             align-items: center;
             align-content: center;
@@ -128,32 +130,28 @@
             margin: 8px;
             display: flex;
             font-size: 16px;
+            background-position: "center";
+            background-size: "cover";
+            background-repeat: "no-repeat";
+            animation: animatedBackground 85s linear infinite;
+            animation-fill-mode: forwards;
+
+            @media (max-width: 768px) {
+              width: 100%;
+              min-height: 250px;
+              padding: 8px 16px 8px 16px;
+            }
 
             &.clear-sky {
               background-image: url("./media/images/clear_sky.png");
-              background-position: "center";
-              background-size: "cover";
-              background-repeat: "no-repeat";
-              animation: animatedBackground 30s linear infinite;
-              animation-fill-mode: forwards;
             }
 
             &.overcast-clouds {
               background-image: url("./media/images/overcast_clouds.png");
-              background-position: "center";
-              background-size: "cover";
-              background-repeat: "no-repeat";
-              animation: animatedBackground 30s linear infinite;
-              animation-fill-mode: forwards;
             }
 
             &.few-clouds {
               background-image: url("./media/images/few_clouds.png");
-              background-position: "center";
-              background-size: "cover";
-              background-repeat: "no-repeat";
-              animation: animatedBackground 30s linear infinite;
-              animation-fill-mode: forwards;
             }
 
             .weather-card-title,
@@ -162,10 +160,6 @@
               filter: contrast(0.1);
             }
 
-            @media (max-width: 768px) {
-              width: 100%;
-              padding: 8px 16px 8px 16px;
-            }
             .weather-card-temp-wrapper {
               display: flex;
               flex-direction: column;
@@ -247,20 +241,26 @@
   }
 
   @keyframes animatedBackground {
-    from {
+    0% {
       background-position: 0 0;
     }
-    to {
+    50% {
       background-position: 100% 0;
+    }
+    100% {
+      background-position: 0 0;
     }
   }
 
   @-webkit-keyframes animatedBackground {
-    from {
+    0% {
       background-position: 0 0;
     }
-    to {
+    50% {
       background-position: 100% 0;
+    }
+    100% {
+      background-position: 0 0;
     }
   }
 
