@@ -64,7 +64,7 @@ export default function Home(props: any) {
           });
       }
     }
-  }, [coords.loading]);
+  }, [coords]);
 
   useEffect(() => {
     if (isMounted.current && searchParams.submitted) {
