@@ -67,12 +67,203 @@
     padding: 5px;
     margin: 0 auto;
 
+    @media (max-width: 768px) {
+      width: 90%;
+    }
+
     .about-page-content {
       text-align: left;
       font-size: 16px;
       line-height: 1.5;
     }
+
+    .home-page {
+      .home-page-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .city-search-form {
+          display: flex;
+          justify-content: center;
+
+          @media (max-width: 768px) {
+            flex-direction: column;
+            justify-content: space-between;
+            align-content: center;
+            align-items: center;
+            input {
+              margin-bottom: 8px;
+              width: 100%;
+            }
+            .btn {
+              margin-top: 8px;
+              width: 100%;
+            }
+          }
+        }
+
+        .card-group {
+          margin-top: 64px;
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          padding: 8px;
+
+          @media (max-width: 768px) {
+            height: 100%;
+            margin-top: 32px;
+            flex-direction: column;
+            align-items: center;
+            align-content: center;
+          }
+
+          .weather-card-wrapper {
+            background-color: #242526;
+            border-radius: 10px;
+            width: 45%;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 8px 32px 8px 32px;
+            margin: 8px;
+            display: flex;
+            font-size: 16px;
+            background-position: "center";
+            background-size: "cover";
+            background-repeat: "no-repeat";
+            animation: animatedBackground 85s linear infinite;
+            animation-fill-mode: forwards;
+
+            @media (max-width: 768px) {
+              width: 100%;
+              min-height: 250px;
+              padding: 8px 16px 8px 16px;
+            }
+
+            &.clear-sky {
+              background-image: url("./media/images/clear_sky.png");
+            }
+
+            &.overcast-clouds {
+              background-image: url("./media/images/overcast_clouds.png");
+            }
+
+            &.few-clouds {
+              background-image: url("./media/images/few_clouds.png");
+            }
+
+            .weather-card-title,
+            .weather-card-description {
+              mix-blend-mode: difference;
+              filter: contrast(0.1);
+            }
+
+            .weather-card-temp-wrapper {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-end;
+              margin-block-start: 0.83em;
+              margin-block-end: 0.83em;
+              margin-top: 16px;
+              mix-blend-mode: difference;
+              filter: contrast(0.3);
+              .weather-card-temp {
+                margin-top: 8px;
+              }
+            }
+
+            .weather-card-sunrise-sunset {
+              display: flex;
+              flex-direction: column;
+              margin-top: 16px;
+              mix-blend-mode: difference;
+              filter: contrast(0.3);
+
+              .weather-card-sunrise,
+              .weather-card-sunset {
+                margin-top: 8px;
+              }
+            }
+            .weather-card-overview {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              margin-bottom: 16px;
+              .weather-card-icon-wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 4px;
+
+                .weather-card-icon {
+                  margin-top: -16px;
+                  width: 50px;
+                  height: auto;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
+
+  .loader {
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 40px;
+    height: 40px;
+    margin-top: 64px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% {
+      -webkit-transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes animatedBackground {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: 0 0;
+    }
+  }
+
+  @-webkit-keyframes animatedBackground {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 100% 0;
+    }
+    100% {
+      background-position: 0 0;
+    }
+  }
+
 
   .btn {
     height: 40px;

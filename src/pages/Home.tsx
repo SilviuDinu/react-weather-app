@@ -1,11 +1,21 @@
-import { ENDPOINTS } from "@enums/endpoints.enum";
 import { HOME_MESSAGES } from "@enums/home.enum";
-import { FORM_DATA } from "@enums/search-form.enum";
 import { CurrentCityWeather } from "@models/current-weather";
-import { useEffect, useState } from "react";
+import Notification from "@components/Notification";
 import SearchForm from "@components/SearchForm";
-import { SearchParams } from "@models/search-params";
-import { buildSearchParams } from '@utils/helpers';
+import Loader from "@components/Loader";
+import CardGroup from "@components/CardGroup";
+import { Notification as NotificationModel } from "@models/notification";
+import { SearchParamsContext } from "@providers/SearchParamsContext";
+import { WeatherContext } from "@providers/WeatherContext";
+import {
+  getObjIndexFromArray,
+  getWeatherByCity,
+  getWeatherByCoords,
+} from "@utils/helpers";
+import { useContext, useEffect, useRef, useState } from "react";
+import { FORM_DATA } from "@enums/search-form.enum";
+import { CoordsContext } from "@providers/CoordsContext";
+import { LoadingContext } from '@providers/LoadingContext';
 
 const formData = {
   input: {
@@ -18,97 +28,99 @@ const formData = {
   class: "city-search-form",
 };
 
-const getData = (params: any): Promise<any> => {
-  const query = buildSearchParams(params);
-  return fetch(ENDPOINTS.MOCK_CITY + query, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
-};
-
 export default function Home(props: any) {
-  const [weather, setWeather] = useState<CurrentCityWeather[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [searchParams, setSearchParams] = useState<SearchParams>({
-    searchValue: "",
-    lat: NaN,
-    long: NaN,
-    submitted: false,
-  });
+  const isMounted = useRef(true);
+  const [notification, setNotification] = useState<NotificationModel>();
+  const [loading, setLoading] = useContext(LoadingContext);
+  const [searchParams, setSearchParams] = useContext(SearchParamsContext);
+  const [coords, setCoords] = useContext(CoordsContext);
+  const [weather, setWeather] = useContext(WeatherContext);
 
-  useEffect((): any => {
-    let isSubscribed = true;
-    if (searchParams.submitted && !loading) {
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isMounted.current) {
+      setLoading(coords.loading);
+      if (!coords.loading) {
+        getWeatherByCoords({ lat: coords.lat, long: coords.long })
+          .then((response: any) => response.json())
+          .then((response: CurrentCityWeather[]) => {
+            if (isMounted.current) {
+              updateWeather(response);
+            }
+          })
+          .catch((err: any) => {
+            if (isMounted.current) {
+              setNotification({
+                type: "error",
+                message: err.error,
+                isVisible: true,
+              });
+            }
+          });
+      }
+    }
+  }, [coords]);
+
+  useEffect(() => {
+    if (isMounted.current && searchParams.submitted) {
       setLoading(true);
-      getData({ cityName: searchParams.searchValue, units: 'imperial' })
+      getWeatherByCity({ cityName: searchParams.searchValue, units: "metric" })
         .then((response: any) => response.json())
         .then((response: CurrentCityWeather[]) => {
-          if (isSubscribed) {
-            setWeather((weather) => [...weather, ...response]);
+          if (isMounted.current) {
+            updateWeather(response);
+            setSearchParams({
+              ...searchParams,
+              searchValue: "",
+              submitted: false,
+            });
           }
         })
-        .catch((err) => {
-          throw new Error(err);
+        .catch((err: any) => {
+          if (isMounted.current) {
+            setNotification({
+              type: "error",
+              message: err.error,
+              isVisible: true,
+            });
+          }
         })
-        .finally(() => (isSubscribed ? setLoading(false) : null));
+        .finally(() => (isMounted.current ? setLoading(false) : null));
     }
-
-    return () => (isSubscribed = false);
   }, [searchParams.submitted]);
 
-  useEffect((): any => {
-    let isSubscribed = true;
-    navigator.geolocation.getCurrentPosition(function (position) {
-      if (isSubscribed) {
-        setSearchParams((searchParams: SearchParams) => {
-          return {
-            ...searchParams,
-            lat: position.coords.latitude,
-            long: position.coords.longitude,
-          };
-        });
-      }
-    });
-
-    console.log("Latitude is:", searchParams.lat);
-    console.log("Longitude is:", searchParams.long);
-    return () => (isSubscribed = false);
-  }, [searchParams.lat, searchParams.long]);
-
-  const onInputChange = (e: Event): void => {
-    const val = (e.target as HTMLTextAreaElement).value || "";
-    setSearchParams({
-      ...searchParams,
-      submitted: false,
-      searchValue: val,
-    });
-  };
-
-  const onFormSubmit = (e: Event): void => {
-    if (e) {
-      e.preventDefault();
+  const updateWeather = (response: CurrentCityWeather[]): void => {
+    const [item = {}] = response;
+    const index = getObjIndexFromArray(weather, item);
+    if (index > -1) {
+      weather[index] = item;
+      setWeather([...weather]);
+    } else {
+      setWeather((weather: CurrentCityWeather[]) => [...weather, ...response]);
     }
-    setSearchParams({
-      ...searchParams,
-      submitted: true,
-    });
   };
 
   return (
     <div className="home-page">
       <h1 className="home-page-title">{HOME_MESSAGES.TITLE}</h1>
+      <Notification
+        isVisible={notification?.isVisible}
+        type={notification?.type}
+        message={notification?.message}
+      />
       <div className="home-page-content">
-        <SearchForm
-          form={formData}
-          inputValue={searchParams.searchValue}
-          onInputChange={onInputChange}
-          onFormSubmit={onFormSubmit}
-        />
-        {!loading
-          ? weather.map((item: CurrentCityWeather, index: number) => (
-              <p key={index}>{item.name}</p>
-            ))
-          : "Loading"}
+        <SearchForm form={formData} />
+        {/* try to display forecast based on current location */}
+        {coords.loading && !coords.error ? (
+          <Loader isLoading={coords.loading} />
+        ) : (
+          <CardGroup />
+        )}
       </div>
     </div>
   );
