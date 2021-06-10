@@ -1,6 +1,7 @@
 import { SYMBOLS } from "@enums/symbols.enum";
 import moment from "moment";
 import { capitalize } from "@utils/helpers";
+import { MISC } from '@enums/misc.enum';
 
 export default function Card(props: any) {
   const { data } = props;
@@ -40,10 +41,13 @@ export default function Card(props: any) {
         </div>
         <div className="weather-card-sunrise-sunset">
           <span className="weather-card-sunrise">
-            {`Sunrise: ${moment(data.sys.sunrise).format("HH:mm")} am`}
+            {`Sunrise: ${moment.unix(data.sys.sunrise).format("HH:mm")}`}
           </span>
           <span className="weather-card-sunset">
-            {`Sunset: ${moment(data.sys.sunset).format("HH:mm")} pm`}
+            {`Sunset: ${moment.unix(data.sys.sunset).format("HH:mm")}`}
+          </span>
+          <span className="weather-card-disclaimer">
+            {MISC.LOCAL_TIMEZONE_DISCLAIMER}
           </span>
         </div>
       </div>

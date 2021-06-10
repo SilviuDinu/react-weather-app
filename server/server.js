@@ -37,7 +37,7 @@ app.get("/api/current/city", (req, res) => {
   axios
     .get(`https://${BASE_URL}?q=${cityName}&units=${units}&appid=${API_KEY}`)
     .then((response) => {
-      res.json(response.data);
+      res.json([response.data]);
     })
     .catch((error) => {
       res.status(400).send({ error });
@@ -48,10 +48,10 @@ app.get("/api/current/coords", (req, res) => {
   const { lat, long, units = "metric" } = req.query;
   axios
     .get(
-      `https://${BASE_URL}?lat=${lat}&lon=${lon}&units=${units}&appid=${API_KEY}`
+      `https://${BASE_URL}?lat=${lat}&lon=${long}&units=${units}&appid=${API_KEY}`
     )
     .then((response) => {
-      res.json(response.data);
+      res.json([response.data]);
     })
     .catch((error) => {
       res.status(400).send({ error });
