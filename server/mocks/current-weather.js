@@ -41,7 +41,7 @@ module.exports = [
     sys: { type: 2, id: 2009555, country: 'RO', sunrise: 1622860258, sunset: 1622915893 },
     timezone: 10800,
     id: 670474,
-    name: 'Ploiești',
+    name: 'Ploiesti',
     cod: 200,
   },
   {
