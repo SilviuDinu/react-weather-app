@@ -112,14 +112,6 @@
           justify-content: center;
           padding: 8px;
 
-          @media (max-width: 768px) {
-            height: 100%;
-            margin-top: 32px;
-            flex-direction: column;
-            align-items: center;
-            align-content: center;
-          }
-
           .weather-card-wrapper {
             background-color: #242526;
             border-radius: 10px;
@@ -130,9 +122,6 @@
             margin: 8px;
             display: flex;
             font-size: 16px;
-            background-position: "center";
-            background-size: "cover";
-            background-repeat: "no-repeat";
             animation: animatedBackground 85s linear infinite;
             animation-fill-mode: forwards;
 
@@ -140,6 +129,11 @@
               width: 100%;
               min-height: 250px;
               padding: 8px 16px 8px 16px;
+              height: 100%;
+              margin-top: 32px;
+              flex-direction: column;
+              align-items: center;
+              align-content: center;
             }
 
             .weather-card-disclaimer {
@@ -176,6 +170,14 @@
               .weather-card-temp {
                 margin-top: 8px;
               }
+
+              @media (max-width: 768px) {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-around;
+              }
+          
             }
 
             .weather-card-sunrise-sunset {
@@ -185,9 +187,29 @@
               mix-blend-mode: difference;
               filter: contrast(0.3);
 
+              @media (max-width: 768px) {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+              }
+
+              @media (max-width: 600px) {
+                width: 90%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                margin-bottom: 16px;
+              }
+
               .weather-card-sunrise,
               .weather-card-sunset {
                 margin-top: 8px;
+
+                @media (max-width: 768px) {
+                  margin-top: 8px;
+                  margin-bottom: 32px;
+                }
               }
             }
             .weather-card-overview {
@@ -195,16 +217,33 @@
               flex-direction: column;
               align-items: flex-start;
               margin-bottom: 16px;
+
+              @media (max-width: 768px) {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+              }
+
               .weather-card-icon-wrapper {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
                 margin-bottom: 4px;
+                vertical-align: middle;
 
                 .weather-card-icon {
                   margin-top: -16px;
                   width: 50px;
                   height: auto;
+                }
+
+                @media (max-width: 768px) {
+                  width: 100%;
+                  flex-direction: row;
+                  flex-wrap: wrap;
+                  vertical-align: middle;
+                  justify-content: space-around;
                 }
               }
             }
