@@ -1,6 +1,6 @@
 export interface Coords {
     lat: number | null,
-    long: number | null,
+    lon: number | null,
     loading: boolean,
     error: boolean
 }

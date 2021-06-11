@@ -4,7 +4,7 @@ import { createContext, useState } from "react";
 const defaultValue = {
   searchValue: "",
   lat: null,
-  long: null,
+  lon: null,
   submitted: false,
 };
 

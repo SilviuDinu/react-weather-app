@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from "react";
 
 const defaultValue = {
   lat: null,
-  long: null,
+  lon: null,
   loading: true,
   error: false,
 };
@@ -19,7 +19,7 @@ export const CoordsProvider = (props: any): any => {
           setCoords((coords: Coords) => {
             return {
               lat: position.coords.latitude,
-              long: position.coords.longitude,
+              lon: position.coords.longitude,
               loading: false,
               error: false,
             };

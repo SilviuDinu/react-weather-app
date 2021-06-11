@@ -47,10 +47,10 @@ app.get("/api/current/city", (req, res, next) => {
 });
 
 app.get("/api/current/coords", (req, res, next) => {
-  const { lat, long, units = "metric" } = req.query;
+  const { lat, lon, units = "metric" } = req.query;
   axios
     .get(
-      `https://${BASE_URL}?lat=${lat}&lon=${long}&units=${units}&appid=${API_KEY}`
+      `https://${BASE_URL}?lat=${lat}&lon=${lon}&units=${units}&appid=${API_KEY}`
     )
     .then((response) => {
       res.json([response.data]);
@@ -61,8 +61,8 @@ app.get("/api/current/coords", (req, res, next) => {
 });
 
 app.get("/api/current/location", (req, res, next) => {
-  const { lat, long, sensor = true } = req.query;
-  const latlng = [lat, long].join(",");
+  const { lat, lon, sensor = true } = req.query;
+  const latlng = [lat, lon].join(",");
   axios
     .get(
       `https://${MAPS_BASE_URL}?latlng=${latlng}&sensor=${sensor}&key=${MAPS_API_KEY}`
@@ -94,8 +94,8 @@ app.get("/mockapi/current/city", (req, res, next) => {
 });
 
 app.get("/mockapi/current/location", (req, res, next) => {
-  const { lat, long } = req.query;
-  const latlng = [lat, long].join(",");
+  const { lat, lon } = req.query;
+  const latlng = [lat, lon].join(",");
   try {
     res.json(current_location);
   } catch (error) {
@@ -104,11 +104,11 @@ app.get("/mockapi/current/location", (req, res, next) => {
 });
 
 app.get("/mockapi/current/coords", (req, res, next) => {
-  const { lat, long } = req.query;
+  const { lat, lon } = req.query;
   const result = current_weather.find(
     (item) =>
       Math.abs(parseFloat(item.coord.lat, 3) - parseFloat(lat, 3)) < 0.05 &&
-      Math.abs(parseFloat(item.coord.lon, 3) - parseFloat(long, 3)) < 0.05
+      Math.abs(parseFloat(item.coord.lon, 3) - parseFloat(lon, 3)) < 0.05
   );
   result ? res.json([result]) : next({ message: "error" });
 });
