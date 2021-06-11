@@ -17,6 +17,8 @@ const BASE_URL = process.env.WEATHER_API_BASE_URL;
 
 const app = express();
 const port = process.env.PORT || 3001;
+app.use(express.static(path.join('../build')));
+
 app.listen(port, () => {
   console.log("Running on port " + port);
 });

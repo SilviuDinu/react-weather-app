@@ -1,5 +1,5 @@
 import { SearchParams } from "@models/search-params";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
 const defaultValue = {
   searchValue: "",

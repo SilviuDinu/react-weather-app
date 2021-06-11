@@ -17,8 +17,10 @@ export default function Card(props: any) {
           <div className="weather-card-icon-wrapper">
             <img
               className="weather-card-icon"
-              src={`http://openweathermap.org/img/w/${data.weather[0].icon}.png`}
+              src={`http://${MISC.IMAGES_URI}${data.weather[0].icon}.png`}
               alt={data.weather[0].main}
+              width="50"
+              height="50"
             />
             <span className="weather-card-description">
               {capitalize(data.weather[0].description)}

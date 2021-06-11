@@ -5,17 +5,14 @@ import Loader from "@components/Loader";
 import CardGroup from "@components/CardGroup";
 import { SearchParamsContext } from "@providers/SearchParamsContext";
 import { WeatherContext } from "@providers/WeatherContext";
-import {
-  getObjIndexFromArray,
-  getWeatherByCity,
-  getWeatherByCoords,
-} from "@utils/helpers";
+import { getObjIndexFromArray } from "@utils/helpers";
 import { useContext, useEffect, useRef } from "react";
 import { FORM_DATA } from "@enums/search-form.enum";
 import { CoordsContext } from "@providers/CoordsContext";
 import { NotificationContext } from "@providers/NotificationContext";
 import { LoadingContext } from "@providers/LoadingContext";
-import { MESSAGES } from '@enums/misc.enum';
+import { MESSAGES } from "@enums/misc.enum";
+import { getWeatherByCity, getWeatherByCoords } from '@utils/api';
 
 const formData = {
   input: {
