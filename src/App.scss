@@ -6,7 +6,7 @@
 
 .App {
   background-color: #282c34;
-  height: 100vh;
+  height: 100%;
   overflow: auto;
   text-align: center;
   display: flex;
@@ -167,6 +167,14 @@
               background-image: url("./media/images/few_clouds.png");
             }
 
+            &.moderate-rain {
+              background-image: url("./media/images/moderate_rain.png");
+            }
+
+            &.broken-clouds {
+              background-image: url("./media/images/broken_clouds.png");
+            }
+
             .weather-card-title,
             .weather-card-description {
               mix-blend-mode: difference;
@@ -324,11 +332,11 @@
   .footer {
     margin-top: calc(50% - 250px);
     width: 100%;
-    // position: absolute;
-    // right: 0;
-    // left: 0;
+    position: absolute;
+    right: 0;
+    left: 0;
     bottom: 0;
-    display: flex;
+    // display: flex;
 
     .madeWithLove {
       display: flex;

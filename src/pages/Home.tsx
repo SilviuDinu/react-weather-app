@@ -42,7 +42,7 @@ export default function Home(props: any) {
   useEffect(() => {
     if (isMounted.current) {
       setLoading(coords.loading);
-      if (!coords.loading) {
+      if (!coords.loading && coords.lat !== null && coords.long !== null) {
         getWeatherByCoords({ lat: coords.lat, long: coords.long })
           .then((response: any) => response.json())
           .then((response: CurrentCityWeather[]) => {

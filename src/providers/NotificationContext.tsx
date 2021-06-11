@@ -28,9 +28,6 @@ export const NotificationProvider = (props: any) => {
   const [notification, setNotification] = useState<NotificationModel>(val);
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
     setNotification({ ...notification, isVisible: false });
   };
   return (
