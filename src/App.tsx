@@ -4,6 +4,7 @@ import Home from "@pages/Home";
 import Navbar from "@components/Navbar";
 import About from "@pages/About";
 import Body from "@components/Body";
+import Footer from "@components/Footer";
 import Page404 from "@pages/Page404";
 import { SearchParamsProvider } from "@providers/SearchParamsContext";
 import { WeatherProvider } from "@providers/WeatherContext";
@@ -41,6 +42,7 @@ function App() {
             </WeatherProvider>
           </NotificationProvider>
         </Body>
+        <Footer />
       </Router>
     </div>
   );

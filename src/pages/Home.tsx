@@ -12,7 +12,7 @@ import { CoordsContext } from "@providers/CoordsContext";
 import { NotificationContext } from "@providers/NotificationContext";
 import { LoadingContext } from "@providers/LoadingContext";
 import { MESSAGES } from "@enums/misc.enum";
-import { getWeatherByCity, getWeatherByCoords } from '@utils/api';
+import { getWeatherByCity, getWeatherByCoords } from "@utils/api";
 
 const formData = {
   input: {
