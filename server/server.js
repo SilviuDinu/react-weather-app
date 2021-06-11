@@ -77,20 +77,18 @@ app.get("/api/current/location", (req, res, next) => {
 app.get("/mockapi/current/all", (req, res, next) => {
   try {
     res.json(current_weather);
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
 
 app.get("/mockapi/current/city", (req, res, next) => {
   const { cityName } = req.query;
-  console.log(cityName)
+  console.log(cityName);
   const result = current_weather.find(
     (item) => item.name.toLowerCase() === cityName.toLowerCase()
   );
-  result
-    ? res.json([result])
-    : next(error);
+  result ? res.json([result]) : next({ message: "error" });
 });
 
 app.get("/mockapi/current/location", (req, res, next) => {
@@ -98,7 +96,7 @@ app.get("/mockapi/current/location", (req, res, next) => {
   const latlng = [lat, long].join(",");
   try {
     res.json(current_location);
-  } catch {
+  } catch (error) {
     next(error);
   }
 });
@@ -110,17 +108,15 @@ app.get("/mockapi/current/coords", (req, res, next) => {
       Math.abs(parseFloat(item.coord.lat, 3) - parseFloat(lat, 3)) < 0.05 &&
       Math.abs(parseFloat(item.coord.lon, 3) - parseFloat(long, 3)) < 0.05
   );
-  result
-    ? res.json([result])
-    : next(error);
+  result ? res.json([result]) : next({ message: "error" });
 });
 
 app.use((error, req, res, next) => {
   if (error.status) {
-      res.status(error.status);
+    res.status(error.status);
   } else res.status(500);
   res.json({
-      message: error.message,
-      stack: process.env.NODE_ENV === 'production' ? '🥞' : error.stack
-  })
+    message: error.message,
+    stack: process.env.NODE_ENV === "production" ? "🥞" : error.stack,
+  });
 });
