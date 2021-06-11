@@ -9,6 +9,7 @@ import { SearchParamsProvider } from "@providers/SearchParamsContext";
 import { WeatherProvider } from "@providers/WeatherContext";
 import { CoordsProvider } from "@providers/CoordsContext";
 import { LoadingProvider } from "@providers/LoadingContext";
+import { NotificationProvider } from "@providers/NotificationContext";
 
 function App() {
   return (
@@ -16,27 +17,29 @@ function App() {
       <Router>
         <Navbar />
         <Body>
-          <WeatherProvider>
-            <LoadingProvider>
-              <CoordsProvider>
-                <Switch>
-                  {/* @ts-ignore */}
-                  <Route exact path="/">
-                    <SearchParamsProvider>
-                      <Home />
-                    </SearchParamsProvider>
-                  </Route>
-                  {/* @ts-ignore */}
-                  <Route exact path="/about">
-                    <About />
-                  </Route>
-                  <Route path="*">
-                    <Page404 />
-                  </Route>
-                </Switch>
-              </CoordsProvider>
-            </LoadingProvider>
-          </WeatherProvider>
+          <NotificationProvider>
+            <WeatherProvider>
+              <LoadingProvider>
+                <CoordsProvider>
+                  <Switch>
+                    {/* @ts-ignore */}
+                    <Route exact path="/">
+                      <SearchParamsProvider>
+                        <Home />
+                      </SearchParamsProvider>
+                    </Route>
+                    {/* @ts-ignore */}
+                    <Route exact path="/about">
+                      <About />
+                    </Route>
+                    <Route path="*">
+                      <Page404 />
+                    </Route>
+                  </Switch>
+                </CoordsProvider>
+              </LoadingProvider>
+            </WeatherProvider>
+          </NotificationProvider>
         </Body>
       </Router>
     </div>

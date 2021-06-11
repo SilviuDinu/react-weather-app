@@ -32,7 +32,7 @@ app.get("/", async (req, res) => {
   res.send("Hello");
 });
 
-app.get("/api/current/city", (req, res) => {
+app.get("/api/current/city", (req, res, next) => {
   const { cityName, units = "metric" } = req.query;
   axios
     .get(`https://${BASE_URL}?q=${cityName}&units=${units}&appid=${API_KEY}`)
@@ -40,11 +40,11 @@ app.get("/api/current/city", (req, res) => {
       res.json([response.data]);
     })
     .catch((error) => {
-      res.status(400).send({ error });
+      next(error);
     });
 });
 
-app.get("/api/current/coords", (req, res) => {
+app.get("/api/current/coords", (req, res, next) => {
   const { lat, long, units = "metric" } = req.query;
   axios
     .get(
@@ -54,11 +54,11 @@ app.get("/api/current/coords", (req, res) => {
       res.json([response.data]);
     })
     .catch((error) => {
-      res.status(400).send({ error });
+      next(error);
     });
 });
 
-app.get("/api/current/location", (req, res) => {
+app.get("/api/current/location", (req, res, next) => {
   const { lat, long, sensor = true } = req.query;
   const latlng = [lat, long].join(",");
   axios
@@ -69,20 +69,20 @@ app.get("/api/current/location", (req, res) => {
       res.json(response.data);
     })
     .catch((error) => {
-      res.status(400).send({ error });
+      next(error);
     });
 });
 
 // MOCKS
-app.get("/mockapi/current/all", (req, res) => {
+app.get("/mockapi/current/all", (req, res, next) => {
   try {
     res.json(current_weather);
   } catch {
-    res.status(400).send({ error: "Something went wrong with the mock" });
+    next(error);
   }
 });
 
-app.get("/mockapi/current/city", (req, res) => {
+app.get("/mockapi/current/city", (req, res, next) => {
   const { cityName } = req.query;
   console.log(cityName)
   const result = current_weather.find(
@@ -90,22 +90,20 @@ app.get("/mockapi/current/city", (req, res) => {
   );
   result
     ? res.json([result])
-    : res.status(400).send({ error: `Could not find ${cityName}` });
+    : next(error);
 });
 
-app.get("/mockapi/current/location", (req, res) => {
+app.get("/mockapi/current/location", (req, res, next) => {
   const { lat, long } = req.query;
   const latlng = [lat, long].join(",");
   try {
     res.json(current_location);
   } catch {
-    res
-      .status(400)
-      .send({ error: "Something went wrong while getting your location" });
+    next(error);
   }
 });
 
-app.get("/mockapi/current/coords", (req, res) => {
+app.get("/mockapi/current/coords", (req, res, next) => {
   const { lat, long } = req.query;
   const result = current_weather.find(
     (item) =>
@@ -114,5 +112,15 @@ app.get("/mockapi/current/coords", (req, res) => {
   );
   result
     ? res.json([result])
-    : res.status(400).send({ error: `Could not find ${cityName}` });
+    : next(error);
+});
+
+app.use((error, req, res, next) => {
+  if (error.status) {
+      res.status(error.status);
+  } else res.status(500);
+  res.json({
+      message: error.message,
+      stack: process.env.NODE_ENV === 'production' ? '🥞' : error.stack
+  })
 });

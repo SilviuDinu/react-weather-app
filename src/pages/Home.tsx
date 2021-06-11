@@ -1,10 +1,8 @@
 import { HOME_MESSAGES } from "@enums/home.enum";
 import { CurrentCityWeather } from "@models/current-weather";
-import Notification from "@components/Notification";
 import SearchForm from "@components/SearchForm";
 import Loader from "@components/Loader";
 import CardGroup from "@components/CardGroup";
-import { Notification as NotificationModel } from "@models/notification";
 import { SearchParamsContext } from "@providers/SearchParamsContext";
 import { WeatherContext } from "@providers/WeatherContext";
 import {
@@ -12,10 +10,12 @@ import {
   getWeatherByCity,
   getWeatherByCoords,
 } from "@utils/helpers";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { FORM_DATA } from "@enums/search-form.enum";
 import { CoordsContext } from "@providers/CoordsContext";
-import { LoadingContext } from '@providers/LoadingContext';
+import { NotificationContext } from "@providers/NotificationContext";
+import { LoadingContext } from "@providers/LoadingContext";
+import { MESSAGES } from '@enums/misc.enum';
 
 const formData = {
   input: {
@@ -30,10 +30,10 @@ const formData = {
 
 export default function Home(props: any) {
   const isMounted = useRef(true);
-  const [notification, setNotification] = useState<NotificationModel>();
+  const [notification, setNotification] = useContext(NotificationContext);
   const [loading, setLoading] = useContext(LoadingContext);
   const [searchParams, setSearchParams] = useContext(SearchParamsContext);
-  const [coords, setCoords] = useContext(CoordsContext);
+  const [coords] = useContext(CoordsContext);
   const [weather, setWeather] = useContext(WeatherContext);
 
   useEffect(() => {
@@ -51,13 +51,18 @@ export default function Home(props: any) {
           .then((response: CurrentCityWeather[]) => {
             if (isMounted.current) {
               updateWeather(response);
+              setNotification({
+                severity: "success",
+                message: `${MESSAGES.INITIAL_SUCCESS} - ${response[0].name}`,
+                isVisible: true,
+              });
             }
           })
           .catch((err: any) => {
             if (isMounted.current) {
               setNotification({
-                type: "error",
-                message: err.error,
+                severity: "error",
+                message: MESSAGES.GENERIC_ERROR,
                 isVisible: true,
               });
             }
@@ -79,13 +84,18 @@ export default function Home(props: any) {
               searchValue: "",
               submitted: false,
             });
+            setNotification({
+              severity: "success",
+              message: MESSAGES.GENERIC_SUCCESS,
+              isVisible: true,
+            });
           }
         })
-        .catch((err: any) => {
+        .catch(async (err: any) => {
           if (isMounted.current) {
             setNotification({
-              type: "error",
-              message: err.error,
+              severity: "error",
+              message: MESSAGES.GENERIC_ERROR,
               isVisible: true,
             });
           }
@@ -108,11 +118,6 @@ export default function Home(props: any) {
   return (
     <div className="home-page">
       <h1 className="home-page-title">{HOME_MESSAGES.TITLE}</h1>
-      <Notification
-        isVisible={notification?.isVisible}
-        type={notification?.type}
-        message={notification?.message}
-      />
       <div className="home-page-content">
         <SearchForm form={formData} />
         {/* try to display forecast based on current location */}

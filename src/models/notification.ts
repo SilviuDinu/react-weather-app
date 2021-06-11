@@ -1,5 +1,5 @@
 export interface Notification {
     message: string,
     isVisible: boolean,
-    type?: string
+    severity: 'error' | 'info' | 'success' | 'warning' | string
 }
