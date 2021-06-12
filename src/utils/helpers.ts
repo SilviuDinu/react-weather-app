@@ -30,6 +30,9 @@ export const exists = (pool: any[], fish: any): boolean => {
 
 export const areCoordsInArray = (arr: any[], coords: Coords): boolean => {
     const { lat, lon } = coords;
+    if (!lat || !lon) {
+        return false;
+    }
     const parsedLat = parseFloat((lat as number).toFixed(3));
     const parsedLon = parseFloat((lon as number).toFixed(3));
     return arr.some((item: any) => (
@@ -38,6 +41,5 @@ export const areCoordsInArray = (arr: any[], coords: Coords): boolean => {
 }
 
 export const isCloseEnough = (reference: any, value: any, treshold = 0.05): boolean => {
-    return Math.abs(parseFloat(reference.toFixed(3))
-    ) - value < treshold
+    return Math.abs(parseFloat(reference.toFixed(3))) - value < treshold;
 }
