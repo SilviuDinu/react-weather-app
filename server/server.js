@@ -6,14 +6,18 @@ const cors = require('cors');
 const csp = require('helmet-csp');
 const middleware = require('./policies/middleware');
 const current_weather = require('./mocks/current-weather');
-const current_location = require('./mocks/current-location');
+const city_by_coords = require('./mocks/city-by-coords');
+const onecall = require('./mocks/one-call');
 const { default: axios } = require('axios');
+const coordsByCity = require('./mocks/coords-by-city');
+const cityByCoords = require('./mocks/city-by-coords');
 require('dotenv').config();
 
 const API_KEY = process.env.API_KEY;
 const MAPS_API_KEY = process.env.MAPS_API_KEY;
 const MAPS_BASE_URL = process.env.MAPS_API_BASE_URL;
 const BASE_URL = process.env.WEATHER_API_BASE_URL;
+const DIRECT_BASE_URL = process.env.WEATHER_API_DIRECT_BASE_URL;
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -39,20 +43,19 @@ app.get('/api/current/city', (req, res, next) => {
   axios
     .get(`https://${BASE_URL}/weather?q=${cityName}&units=${units}&appid=${API_KEY}`)
     .then(response => {
-      res.json([response.data]);
+      res.json(response.data);
     })
     .catch(error => {
       next(error);
     });
 });
 
-app.get('/api/forecast/coords', (req, res, next) => {
+app.get('/api/one/coords', (req, res, next) => {
   const { lat, lon, lang = 'en', exclude = 'minutely', units = 'metric' } = req.query;
-  console.log(`https://${BASE_URL}/onecall?lat=${lat}&lon=${lon}&exclude=${exclude}&units=${units}&lang=${lang}&appid=${API_KEY}`)
   axios
     .get(`https://${BASE_URL}/onecall?lat=${lat}&lon=${lon}&exclude=${exclude}&units=${units}&lang=${lang}&appid=${API_KEY}`)
     .then(response => {
-      res.json([response.data]);
+      res.json(response.data);
     })
     .catch(error => {
       next(error);
@@ -64,18 +67,30 @@ app.get('/api/current/coords', (req, res, next) => {
   axios
     .get(`https://${BASE_URL}/weather?lat=${lat}&lon=${lon}&units=${units}&appid=${API_KEY}`)
     .then(response => {
-      res.json([response.data]);
+      res.json(response.data);
     })
     .catch(error => {
       next(error);
     });
 });
 
-app.get('/api/current/location', (req, res, next) => {
+app.get('/api/current/coords-to-city', (req, res, next) => {
   const { lat, lon, sensor = true } = req.query;
   const latlng = [lat, lon].join(',');
   axios
     .get(`https://${MAPS_BASE_URL}?latlng=${latlng}&sensor=${sensor}&key=${MAPS_API_KEY}`)
+    .then(response => {
+      res.json(response.data);
+    })
+    .catch(error => {
+      next(error);
+    });
+});
+
+app.get('/api/current/city-to-coords', (req, res, next) => {
+  const { cityName } = req.query;
+  axios
+    .get(`https://${DIRECT_BASE_URL}/direct?q=${cityName}&appid=${API_KEY}`)
     .then(response => {
       res.json(response.data);
     })
@@ -97,14 +112,24 @@ app.get('/mockapi/current/city', (req, res, next) => {
   const { cityName } = req.query;
   console.log(cityName);
   const result = current_weather.find(item => item.name.toLowerCase() === cityName.toLowerCase());
-  result ? res.json([result]) : next({ message: 'error' });
+  result ? res.json(result) : next({ message: 'error' });
 });
 
-app.get('/mockapi/current/location', (req, res, next) => {
+app.get('/mockapi/current/coords-to-city', (req, res, next) => {
   const { lat, lon } = req.query;
   const latlng = [lat, lon].join(',');
   try {
-    res.json(current_location);
+    res.json(cityByCoords);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/mockapi/current/city-to-coords', (req, res, next) => {
+  const { lat, lon } = req.query;
+  const latlng = [lat, lon].join(',');
+  try {
+    res.json(coordsByCity);
   } catch (error) {
     next(error);
   }
@@ -112,10 +137,23 @@ app.get('/mockapi/current/location', (req, res, next) => {
 
 app.get('/mockapi/current/coords', (req, res, next) => {
   const { lat, lon } = req.query;
-  const result = current_weather.find(
-    item => Math.abs(parseFloat(item.coord.lat, 3) - parseFloat(lat, 3)) < 0.05 && Math.abs(parseFloat(item.coord.lon, 3) - parseFloat(lon, 3)) < 0.05
+  try {
+    const result = current_weather.find(
+      item =>
+        Math.abs(parseFloat(item.coord.lat, 3) - parseFloat(lat, 3)) < 0.05 && Math.abs(parseFloat(item.coord.lon, 3) - parseFloat(lon, 3)) < 0.05
+    );
+    result ? res.json(result) : next({ message: 'error' });
+  } catch (error) {
+    result ? res.json(result) : next({ message: error });
+  }
+});
+
+app.get('/mockapi/one/coords', (req, res, next) => {
+  const { lat, lon, lang = 'en', exclude = 'minutely', units = 'metric' } = req.query;
+  const result = onecall.find(
+    item => Math.abs(parseFloat(item.lat, 3) - parseFloat(lat, 3)) < 0.05 && Math.abs(parseFloat(item.lon, 3) - parseFloat(lon, 3)) < 0.05
   );
-  result ? res.json([result]) : next({ message: 'error' });
+  result ? res.json(result) : next({ message: 'error' });
 });
 
 app.use((error, req, res, next) => {

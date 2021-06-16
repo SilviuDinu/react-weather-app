@@ -8,6 +8,8 @@
       "@enums/*": ["src/enums/*"],
       "@media/*": ["src/media/*"],
       "@utils/*": ["src/utils/*"],
+      "@adapters/*": ["src/adapters/*"],
+      "@models/*": ["src/models/*"],
       "@providers/*": ["src/providers/*"]
     }
   }

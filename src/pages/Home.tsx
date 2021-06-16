@@ -1,5 +1,4 @@
 import { HOME_MESSAGES } from '@enums/home.enum';
-import { CurrentCityWeather } from '@models/current-weather';
 import SearchForm from '@components/SearchForm';
 import Loader from '@components/Loader';
 import CardGroup from '@components/CardGroup';
@@ -12,7 +11,8 @@ import { CoordsContext } from '@providers/CoordsContext';
 import { NotificationContext } from '@providers/NotificationContext';
 import { LoadingContext } from '@providers/LoadingContext';
 import { MESSAGES } from '@enums/misc.enum';
-import { getWeatherByCity, getWeatherByCoords } from '@utils/api';
+import { getAllWeatherByCoords, getCoordsByCity, getWeatherByCity, getWeatherByCoords } from '@utils/api';
+import { Forecast } from '@models/forecast';
 
 const formData = {
   input: {
@@ -45,13 +45,12 @@ export default function Home(props: any) {
         if (!areCoordsInArray(weather, coords)) {
           setLoading(coords.loading);
           getWeatherByCoords({ lat: coords.lat, lon: coords.lon })
-            .then((response: any) => response.json())
-            .then((response: CurrentCityWeather[]) => {
+            .then((response: Forecast) => {
               if (isMounted.current) {
                 updateWeather(response);
                 setNotification({
                   severity: 'success',
-                  message: `${MESSAGES.INITIAL_SUCCESS} - ${response[0].name}`,
+                  message: `${MESSAGES.INITIAL_SUCCESS} - ${response.city}`,
                   isVisible: true,
                 });
               }
@@ -73,11 +72,13 @@ export default function Home(props: any) {
   useEffect(() => {
     if (isMounted.current && searchParams.submitted) {
       setLoading(true);
+      // const city = getCoordsByCity(searchParams.searchValue);
+      // console.log(city)
       getWeatherByCity({ cityName: searchParams.searchValue, units: 'metric' })
-        .then((response: any) => response.json())
-        .then((response: CurrentCityWeather[]) => {
+        .then((response: Forecast) => {
           if (isMounted.current) {
             updateWeather(response);
+            console.log(response)
             setSearchParams({
               ...searchParams,
               searchValue: '',
@@ -90,7 +91,7 @@ export default function Home(props: any) {
             });
           }
         })
-        .catch(async (err: any) => {
+        .catch((err: any) => {
           if (isMounted.current) {
             setNotification({
               severity: 'error',
@@ -103,14 +104,14 @@ export default function Home(props: any) {
     }
   }, [searchParams.submitted]);
 
-  const updateWeather = (response: CurrentCityWeather[]): void => {
-    const [item = {}] = response;
+  const updateWeather = (response: Forecast): void => {
+    const item = response;
     const index = getObjIndexFromArray(weather, item);
     if (index > -1) {
       weather[index] = item;
       setWeather([...weather]);
     } else {
-      setWeather((weather: CurrentCityWeather[]) => [...weather, ...response]);
+      setWeather((weather: any[]) => [...weather, item]);
     }
   };
 
