@@ -126,7 +126,7 @@
             margin: 8px;
             display: flex;
             font-size: 16px;
-            animation: animatedBackground 85s linear infinite;
+            animation: animatedBackground 30s linear infinite;
             animation-fill-mode: forwards;
 
             @media (max-width: 767px) {
@@ -157,6 +157,7 @@
 
             &.clear-sky {
               background-image: url("./media/images/clear_sky.png");
+              background-position: 50% 50%;
             }
 
             &.overcast-clouds {

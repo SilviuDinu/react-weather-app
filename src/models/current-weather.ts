@@ -1,4 +1,5 @@
 import { Moment } from "moment";
+import { Weather } from './weather';
 
 export interface CurrentCityWeather {
     coord: Coordinates,
@@ -20,13 +21,6 @@ export interface CurrentCityWeather {
     id: number,
     name: string,
     cod: number,
-}
-
-export interface Weather {
-    id: number,
-    main: string,
-    description: string,
-    icon: string
 }
 
 export interface Wind {

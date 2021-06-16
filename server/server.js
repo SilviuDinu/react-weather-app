@@ -48,6 +48,7 @@ app.get('/api/current/city', (req, res, next) => {
 
 app.get('/api/forecast/coords', (req, res, next) => {
   const { lat, lon, lang = 'en', exclude = 'minutely', units = 'metric' } = req.query;
+  console.log(`https://${BASE_URL}/onecall?lat=${lat}&lon=${lon}&exclude=${exclude}&units=${units}&lang=${lang}&appid=${API_KEY}`)
   axios
     .get(`https://${BASE_URL}/onecall?lat=${lat}&lon=${lon}&exclude=${exclude}&units=${units}&lang=${lang}&appid=${API_KEY}`)
     .then(response => {
