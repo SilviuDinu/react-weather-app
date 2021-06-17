@@ -11,7 +11,7 @@ import { CoordsContext } from '@providers/CoordsContext';
 import { NotificationContext } from '@providers/NotificationContext';
 import { LoadingContext } from '@providers/LoadingContext';
 import { MESSAGES } from '@enums/misc.enum';
-import { getAllWeatherByCoords, getCoordsByCity, getWeatherByCity, getWeatherByCoords } from '@utils/api';
+import Api from '@utils/api';
 import { Forecast } from '@models/forecast';
 
 const formData = {
@@ -24,6 +24,8 @@ const formData = {
   buttonText: FORM_DATA.BUTTON_TEXT,
   class: 'city-search-form',
 };
+
+const api = new Api();
 
 export default function Home(props: any) {
   const isMounted = useRef(true);
@@ -44,7 +46,7 @@ export default function Home(props: any) {
       if (!coords.loading && coords.lat !== null && coords.lon !== null) {
         if (!areCoordsInArray(weather, coords)) {
           setLoading(coords.loading);
-          getWeatherByCoords({ lat: coords.lat, lon: coords.lon })
+          api.getWeatherByCoords({ lat: coords.lat, lon: coords.lon })
             .then((response: Forecast) => {
               if (isMounted.current) {
                 updateWeather(response);
@@ -72,9 +74,7 @@ export default function Home(props: any) {
   useEffect(() => {
     if (isMounted.current && searchParams.submitted) {
       setLoading(true);
-      // const city = getCoordsByCity(searchParams.searchValue);
-      // console.log(city)
-      getWeatherByCity({ cityName: searchParams.searchValue, units: 'metric' })
+      api.getWeatherByCity({ cityName: searchParams.searchValue, units: 'metric' })
         .then((response: Forecast) => {
           if (isMounted.current) {
             updateWeather(response);

@@ -3,69 +3,89 @@ import { ENDPOINTS } from '@enums/endpoints.enum';
 import { FORECAST_TYPES } from '@enums/forecast-types.enum';
 import { buildSearchParams } from './helpers';
 
-const forecastAdapter = new ForecastAdapter();
+export default class Api {
 
-export const getWeatherByCity = (params: any): Promise<any> => {
-    const query = buildSearchParams(params);
-    const promise = fetch(ENDPOINTS.GET_CITY + query, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    });
-    return promise
-        .then((response: any) => response.json())
-        .then((response: any) => {
-           const cucu =  forecastAdapter.adapt(response, FORECAST_TYPES.CURRENT_CITY_WEATHER)
-           console.log(cucu)
-           return cucu
+    private forecastAdapter: ForecastAdapter = new ForecastAdapter();
+
+    constructor() { }
+
+    getWeatherByCity = (params: any): Promise<any> => {
+        const query = buildSearchParams(params);
+        const promise = fetch(ENDPOINTS.GET_CITY + query, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        return promise
+            .then((response: any) => {
+                return response.json().then((json: any) => {
+                    return response.ok ?
+                        this.forecastAdapter.adapt(json, FORECAST_TYPES.CURRENT_CITY_WEATHER) :
+                        Promise.reject(json);
+                })
+            })
+
+    };
+
+    getLocationByCoords = async (params: any): Promise<any> => {
+        const query = buildSearchParams(params);
+        const promise = fetch(ENDPOINTS.GET_LOCATION_BY_COORDS + query, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
         })
-        .catch((err: any) => err)
-};
+        return promise
+            .then((response: any) => {
+                return response.json().then((json: any) => {
+                    return response.ok ?
+                        json :
+                        Promise.reject(json);
+                })
+            })
+    };
 
-export const getLocationByCoords = (params: any): Promise<any> => {
-    const query = buildSearchParams(params);
-    const promise = fetch(ENDPOINTS.GET_LOCATION_BY_COORDS + query, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    })
-    return promise
-        .then((response: any) => response.json())
-        .then((response: any) => response)
-        .catch((err: any) => err)
-};
+    getWeatherByCoords = async (params: any): Promise<any> => {
+        const query = buildSearchParams(params);
+        const promise = fetch(ENDPOINTS.GET_WEATHER_BY_COORDS + query, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        return promise
+            .then((response: any) => {
+                return response.json().then((json: any) => {
+                    return response.ok ?
+                        this.forecastAdapter.adapt(json, FORECAST_TYPES.CURRENT_CITY_WEATHER) :
+                        Promise.reject(json);
+                })
+            })
+    };
 
-export const getWeatherByCoords = (params: any): Promise<any> => {
-    const query = buildSearchParams(params);
-    const promise = fetch(ENDPOINTS.GET_WEATHER_BY_COORDS + query, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    });
-    return promise
-        .then((response: any) => response.json())
-        .then((response: any) => forecastAdapter.adapt(response, FORECAST_TYPES.CURRENT_CITY_WEATHER))
-        .catch((err: any) => err)
-};
+    getAllWeatherByCoords = async (params: any): Promise<any> => {
+        const query = buildSearchParams(params);
+        const promise = fetch(ENDPOINTS.GET_ONE_CALL_BY_COORDS + query, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        return promise
+            .then((response: any) => {
+                return response.json().then((json: any) => {
+                    return response.ok ?
+                        this.forecastAdapter.adapt(json, FORECAST_TYPES.ONE_CALL) :
+                        Promise.reject(json);
+                })
+            })
+    };
 
-export const getAllWeatherByCoords = (params: any): Promise<any> => {
-    const query = buildSearchParams(params);
-    const promise = fetch(ENDPOINTS.GET_ONE_CALL_BY_COORDS + query, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-    });
-    return promise
-        .then((response: any) => response.json())
-        .then((response: any) => forecastAdapter.adapt(response, FORECAST_TYPES.ONE_CALL))
-        .catch((err: any) => err)
-};
-
-export const getCoordsByCity = (cityName: string): Promise<any> => {
-    const promise = fetch(ENDPOINTS.GET_ONE_CALL_BY_COORDS + `?cityName=${cityName}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-    });
-    return promise
-        .then((response: any) => response.json())
-        .then((response: any) => {
-            return { lat: response.lat, lon: response.lon }
-        })
-        .catch((err: any) => err)
+    getCoordsByCity = async (cityName: string): Promise<any> => {
+        const promise = fetch(ENDPOINTS.GET_ONE_CALL_BY_COORDS + `?cityName=${cityName}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        return promise
+            .then((response: any) => {
+                return response.json().then((json: any) => {
+                    return response.ok ?
+                        { lat: json.lat, lon: json.lon } :
+                        Promise.reject(json);
+                })
+            })
+    }
 }
