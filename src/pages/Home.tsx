@@ -78,7 +78,6 @@ export default function Home(props: any) {
         .then((response: Forecast) => {
           if (isMounted.current) {
             updateWeather(response);
-            console.log(response)
             setSearchParams({
               ...searchParams,
               searchValue: '',

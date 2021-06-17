@@ -106,11 +106,12 @@
         .card-group {
           margin-top: 64px;
           width: 100%;
+          min-height: 100%;
           display: flex;
           flex-wrap: wrap;
           justify-content: center;
           padding: 8px;
-          margin-bottom: 64px;
+          margin-bottom: 72px;
 
           @media (max-width: 992px) {
             margin-top: 32px;
@@ -119,15 +120,24 @@
           .weather-card-wrapper {
             background-color: #242526;
             border-radius: 10px;
-            width: 47.5%;
+            width: 46%;
+            height: 100%;
+            font-weight: 300;
+            color: #fff;
             align-items: flex-start;
             justify-content: space-between;
             padding: 8px 32px 8px 32px;
             margin: 8px;
             display: flex;
             font-size: 16px;
+            background-size: cover;
+            box-shadow: none;
             animation: animatedBackground 30s linear infinite;
             animation-fill-mode: forwards;
+
+            @media (max-width: 992px) {
+              background-size: auto;
+            }
 
             @media (max-width: 767px) {
               width: 100%;
@@ -149,6 +159,13 @@
               flex-direction: column;
               align-items: center;
               align-content: center;
+            }
+
+            .weather-card-accordion-summary{
+              padding: 0;
+              margin: 0;
+              display: flex;
+              flex-direction: column;
             }
 
             .weather-card-disclaimer {
