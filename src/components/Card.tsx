@@ -9,29 +9,10 @@ import CardSummaryInfo from './CardSummaryInfo';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      '&:before': {
-        display: 'none',
-      },
       background: 'none',
       border: 'none',
       boxShadow: 'none',
       width: '100%',
-      margin: '0',
-    },
-    summary: {
-      display: 'flex',
-      padding: '0',
-      margin: '0',
-      width: '100%',
-      justifyContent: 'space-between',
-      '&$expanded': {
-        margin: 0,
-      },
-    },
-    expanded: {
-      margin: '0',
-    },
-    '.MuiIconButton-edgeEnd': {
       margin: '0',
     },
   })
@@ -55,10 +36,12 @@ export default function Card(props: any) {
           aria-controls={`weather-card-accordion-summary weather-card-accordion-${props.id}`}
           id={`weather-card-accordion-${props.id}`}
           className={`weather-card-accordion-summary weather-card-accordion-${props.id}`}
-          classes={{ content: classes.summary, expanded: classes.expanded, expandIcon: classes.expanded }}>
+          classes={{ content: 'summary', expanded: 'expanded', expandIcon: 'expanded' }}>
           <CardSummaryInfo data={currentInfo} title={props.title} />
         </AccordionSummary>
-        <AccordionDetails>LOREM IPSUM CONTENTLOREM IPSUM CONTENTLOREM IPSUM CONTENTLOREM IPSUM CONTENT</AccordionDetails>
+        <AccordionDetails classes={{ root: 'expanded' }}>
+          LOREM IPSUM CONTENTLOREM IPSUM CONTENTLOREM IPSUM CONTENTLOREM IPSUM CONTENT
+        </AccordionDetails>
       </Accordion>
     </div>
   );

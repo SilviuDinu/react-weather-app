@@ -109,6 +109,7 @@
           min-height: 100%;
           display: flex;
           flex-wrap: wrap;
+          overflow: auto;
           justify-content: center;
           padding: 8px;
           margin-bottom: 72px;
@@ -141,31 +142,47 @@
 
             @media (max-width: 767px) {
               width: 100%;
-              min-height: 250px;
-              padding: 8px 16px 8px 16px;
+              // min-height: 250px;
               height: 100%;
-              margin-top: 32px;
               flex-direction: column;
+              padding: 8px;
               align-items: center;
               align-content: center;
             }
 
             @media (min-width: 768px) and (max-width: 992px) {
-              width: 90%;
-              min-height: 250px;
-              padding: 8px 16px 8px 16px;
+              width: 100%;
+              // min-height: 250px;
               height: 100%;
-              margin-top: 32px;
-              flex-direction: column;
               align-items: center;
               align-content: center;
             }
 
             .weather-card-accordion-summary{
-              padding: 0;
+              padding: 0px;
               margin: 0;
               display: flex;
               flex-direction: column;
+
+              .summary {
+                display: flex;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                justify-content: space-between;
+
+                @media (max-width: 767px) {
+                  padding: 0;
+                  margin: 0;
+                  flex-direction: column;
+                  align-items: center;
+                  align-content: center;
+                }
+              }
+
+              .expanded {
+                margin: 0;
+              }
             }
 
             .weather-card-disclaimer {
@@ -229,7 +246,6 @@
 
               @media (max-width: 992px) {
                 width: 100%;
-                flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: space-between;
               }
@@ -239,7 +255,6 @@
                 flex-direction: row;
                 flex-wrap: wrap;
                 justify-content: space-around;
-                margin-bottom: 16px;
               }
 
               .weather-card-sunrise,
@@ -265,6 +280,13 @@
                 justify-content: center;
               }
 
+              @media (max-width: 991px) {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+              }
+
               .weather-card-icon-wrapper {
                 display: flex;
                 flex-direction: column;
@@ -282,6 +304,7 @@
                   width: 100%;
                   flex-direction: row;
                   flex-wrap: wrap;
+                  align-items: flex-start;
                   vertical-align: middle;
                   justify-content: space-around;
                 }
