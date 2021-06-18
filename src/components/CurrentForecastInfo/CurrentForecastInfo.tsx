@@ -1,7 +1,7 @@
-import { MISC } from "@enums/misc.enum";
-import { SYMBOLS } from "@enums/symbols.enum";
-import { capitalize } from "lodash";
-import moment from "moment";
+import { MISC } from '@enums/misc.enum';
+import { SYMBOLS } from '@enums/symbols.enum';
+import { capitalize } from 'lodash';
+import moment from 'moment';
 
 export default function CurrentForecastInfo(props: any) {
   const { data } = props;
@@ -17,18 +17,24 @@ export default function CurrentForecastInfo(props: any) {
             width="50"
             height="50"
           />
-          <span className="weather-card-description">{capitalize(data?.weather?.description)}</span>
+          <span className="weather-card-temp current">
+            {`${parseInt(data?.temperature?.value)}`}
+            {SYMBOLS.CELSIULS}
+          </span>
         </div>
+        <span className="weather-card-description">{capitalize(data?.weather?.description)}</span>
       </div>
       <div className="weather-card-temp-wrapper">
-        <span className="weather-card-temp current">
+        {/* <span className="weather-card-temp current">
           {`Temp: ${parseInt(data?.temperature?.value)}`}{SYMBOLS.CELSIULS}
-        </span>
+        </span> */}
         <span className="weather-card-temp high">
-          {`Max: ${parseInt(data?.temperature?.max)}`}{SYMBOLS.CELSIULS}
+          {`Max: ${parseInt(data?.temperature?.max)}`}
+          {SYMBOLS.CELSIULS}
         </span>
         <span className="weather-card-temp low">
-          {`Min: ${parseInt(data?.temperature?.min)}`}{SYMBOLS.CELSIULS}
+          {`Min: ${parseInt(data?.temperature?.min)}`}
+          {SYMBOLS.CELSIULS}
         </span>
         <span className="weather-card-temp humidity">{`Humidity: ${data?.humidity}%`}</span>
       </div>
