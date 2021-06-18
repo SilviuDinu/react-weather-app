@@ -69,6 +69,9 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
             return [];
         }
         const currentInfoTime = moment.unix(current.dt);
+        /* filter daily forecast to keep 
+        only 7 days ahead
+       */
         return !!daily.length
             ? daily
                 .filter((day: any) => moment.unix(day.dt).diff(currentInfoTime, 'days') < 7)
@@ -99,9 +102,19 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
             return [];
         }
         const currentInfoTime = moment.unix(current.dt);
+        /* filter hours so that we only take the hours from today,
+         the hours that are passed the time when the request was made,
+         and reduce them to half
+        */
         return !!hourly.length
             ? hourly
-                .filter((hour: any, idx: number) => moment.unix(hour.dt).diff(currentInfoTime, 'days') < 1 && idx % 2 === 0)
+                .filter((hour: any, idx: number) => {
+                    const hourTime = moment.unix(hour.dt);
+                    return hourTime.diff(currentInfoTime, 'days') < 1
+                        && hourTime.diff(currentInfoTime, 'hours') > 0
+                        && hourTime.isSame(currentInfoTime, 'day')
+                        && idx % 2 === 0
+                })
                 .map((item: any) => {
                     return new ForecastInfo(
                         moment.unix(item.dt),

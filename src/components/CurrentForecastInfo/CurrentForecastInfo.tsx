@@ -22,13 +22,13 @@ export default function CurrentForecastInfo(props: any) {
       </div>
       <div className="weather-card-temp-wrapper">
         <span className="weather-card-temp current">
-          {`Temp: ${parseInt(data?.temperature?.value)}`} {SYMBOLS.CELSIULS}
+          {`Temp: ${parseInt(data?.temperature?.value)}`}{SYMBOLS.CELSIULS}
         </span>
         <span className="weather-card-temp high">
-          {`Max: ${parseInt(data?.temperature?.max)}`} {SYMBOLS.CELSIULS}
+          {`Max: ${parseInt(data?.temperature?.max)}`}{SYMBOLS.CELSIULS}
         </span>
         <span className="weather-card-temp low">
-          {`Min: ${parseInt(data?.temperature?.min)}`} {SYMBOLS.CELSIULS}
+          {`Min: ${parseInt(data?.temperature?.min)}`}{SYMBOLS.CELSIULS}
         </span>
         <span className="weather-card-temp humidity">{`Humidity: ${data?.humidity}%`}</span>
       </div>

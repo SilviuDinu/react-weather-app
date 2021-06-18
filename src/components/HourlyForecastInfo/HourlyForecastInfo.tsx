@@ -12,14 +12,20 @@ export default function HourlyForecastInfo(props: any) {
       {data.map((hour: ForecastInfo, idx: number): any => {
         return (
           <div key={idx} className="hourly-weather-info">
-            <div className="weather-card-temp-wrapper">
-              <span className="weather-card-temp hour">
-                {hour?.timeOfRequest.format('HH:mm')}
+            <div className="hourly-weather-temp-wrapper">
+              <img
+                className="weather-card-icon"
+                src={`http://${MISC.IMAGES_URI}${hour?.weather?.icon}.png`}
+                alt={hour?.temperature.value}
+                width="50"
+                height="50"
+              />
+              <span className="hourly-weather-temp hour">{hour?.timeOfRequest.format('HH:mm')}</span>
+              <span className="hourly-weather-temp current">
+                {`${parseInt(hour?.temperature?.value)}`}
+                {SYMBOLS.CELSIULS}
               </span>
-              <span className="weather-card-temp current">
-                {`${parseInt(hour?.temperature?.value)}`} {SYMBOLS.CELSIULS}
-              </span>
-              <span className="weather-card-temp humidity">{`Humidity: ${hour?.humidity}%`}</span>
+              {/* <span className="hourly-weather-temp humidity">{`Humidity: ${hour?.humidity}%`}</span> */}
             </div>
           </div>
         );
