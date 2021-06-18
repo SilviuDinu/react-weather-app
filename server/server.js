@@ -51,11 +51,11 @@ app.get('/api/current/city', (req, res, next) => {
 });
 
 app.get('/api/one/coords', (req, res, next) => {
-  const { lat, lon, lang = 'en', exclude = 'minutely', units = 'metric' } = req.query;
+  const { lat, lon, lang = 'en', exclude = 'minutely', units = 'metric', cityName } = req.query;
   axios
     .get(`https://${BASE_URL}/onecall?lat=${lat}&lon=${lon}&exclude=${exclude}&units=${units}&lang=${lang}&appid=${API_KEY}`)
     .then(response => {
-      res.json(response.data);
+      res.json({ ...response.data, cityName });
     })
     .catch(error => {
       next(error);
@@ -88,9 +88,9 @@ app.get('/api/current/coords-to-city', (req, res, next) => {
 });
 
 app.get('/api/current/city-to-coords', (req, res, next) => {
-  const { cityName } = req.query;
+  const { cityName, countryCode = 'RO' } = req.query;
   axios
-    .get(`https://${DIRECT_BASE_URL}/direct?q=${cityName}&appid=${API_KEY}`)
+    .get(`https://${DIRECT_BASE_URL}/direct?q=${cityName},${countryCode}&appid=${API_KEY}`)
     .then(response => {
       res.json(response.data);
     })
@@ -126,10 +126,9 @@ app.get('/mockapi/current/coords-to-city', (req, res, next) => {
 });
 
 app.get('/mockapi/current/city-to-coords', (req, res, next) => {
-  const { lat, lon } = req.query;
-  const latlng = [lat, lon].join(',');
+  const { cityName } = req.query;
   try {
-    res.json(coordsByCity);
+    res.json({ lat: coordsByCity[0].lat, lon: coordsByCity[0].lon, cityName });
   } catch (error) {
     next(error);
   }
@@ -149,11 +148,18 @@ app.get('/mockapi/current/coords', (req, res, next) => {
 });
 
 app.get('/mockapi/one/coords', (req, res, next) => {
-  const { lat, lon, lang = 'en', exclude = 'minutely', units = 'metric' } = req.query;
-  const result = onecall.find(
-    item => Math.abs(parseFloat(item.lat, 3) - parseFloat(lat, 3)) < 0.05 && Math.abs(parseFloat(item.lon, 3) - parseFloat(lon, 3)) < 0.05
-  );
-  result ? res.json(result) : next({ message: 'error' });
+  const { lat, lon, lang = 'en', exclude = 'minutely', units = 'metric', cityName } = req.query;
+  const city = cityName.charAt(0).toUpperCase() + cityName.toLowerCase().slice(1);
+  try {
+    res.json({...onecall[0], cityName: city});
+  }
+  catch(err) {
+    next(err);
+  }
+  // const result = onecall.find(
+  //   item => Math.abs(parseFloat(item.lat, 3) - parseFloat(lat, 3)) < 0.05 && Math.abs(parseFloat(item.lon, 3) - parseFloat(lon, 3)) < 0.05
+  // );
+  // result ? res.json({...onecall[0], cityName}) : next({ message: 'error' });
 });
 
 app.use((error, req, res, next) => {

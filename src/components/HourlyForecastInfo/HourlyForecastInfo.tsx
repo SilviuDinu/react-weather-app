@@ -1,18 +1,17 @@
-import { MISC } from "@enums/misc.enum";
-import { SYMBOLS } from "@enums/symbols.enum";
-import { capitalize } from "lodash";
+import { MISC } from '@enums/misc.enum';
+import { SYMBOLS } from '@enums/symbols.enum';
+import { capitalize } from 'lodash';
 
-export default function CardSummaryInfo(props: any) {
+export default function HourlyForecastInfo(props: any) {
   const { data } = props;
   return (
-    <>
+    <div className="hourly-weather-info">
       <div className="weather-card-overview">
-        <h2 className="weather-card-title">{props.title || 'Unknown'}</h2>
         <div className="weather-card-icon-wrapper">
           <img
             className="weather-card-icon"
             src={`http://${MISC.IMAGES_URI}${data?.weather?.icon}.png`}
-            alt={data?.temperature.current}
+            alt={data?.temperature.value}
             width="50"
             height="50"
           />
@@ -21,7 +20,7 @@ export default function CardSummaryInfo(props: any) {
       </div>
       <div className="weather-card-temp-wrapper">
         <span className="weather-card-temp current">
-          {`Temp: ${parseInt(data?.temperature?.current)}`} {SYMBOLS.CELSIULS}
+          {`Temp: ${parseInt(data?.temperature?.value)}`} {SYMBOLS.CELSIULS}
         </span>
         <span className="weather-card-temp high">
           {`Max: ${parseInt(data?.temperature?.max)}`} {SYMBOLS.CELSIULS}
@@ -36,6 +35,6 @@ export default function CardSummaryInfo(props: any) {
         <span className="weather-card-sunset">{`Sunset: ${data?.sunset}`}</span>
         <span className="weather-card-disclaimer">{MISC.LOCAL_TIMEZONE_DISCLAIMER}</span>
       </div>
-    </>
+    </div>
   );
 }

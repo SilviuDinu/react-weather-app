@@ -1,4 +1,4 @@
-import Button from "@components/Button";
+import Button from "@components/Button/Button";
 import { SearchParamsContext } from "@providers/SearchParamsContext";
 import { ChangeEvent, useContext } from "react";
 

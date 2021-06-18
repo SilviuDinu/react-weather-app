@@ -75,7 +75,7 @@ export default class Api {
     };
 
     getCoordsByCity = async (cityName: string): Promise<any> => {
-        const promise = fetch(ENDPOINTS.GET_ONE_CALL_BY_COORDS + `?cityName=${cityName}`, {
+        const promise = fetch(ENDPOINTS.GET_COORDS_BY_CITY + `?cityName=${cityName}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         });
@@ -83,7 +83,7 @@ export default class Api {
             .then((response: any) => {
                 return response.json().then((json: any) => {
                     return response.ok ?
-                        { lat: json.lat, lon: json.lon } :
+                        { ...json } :
                         Promise.reject(json);
                 })
             })

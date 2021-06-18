@@ -1,5 +1,5 @@
 import { WeatherContext } from '@providers/WeatherContext';
-import Card from '@components/Card';
+import Card from '@components/Card/Card';
 import { useContext } from 'react';
 import { Forecast } from '@models/forecast';
 

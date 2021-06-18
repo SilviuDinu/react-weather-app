@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.scss";
 import Home from "@pages/Home";
-import Navbar from "@components/Navbar";
+import Navbar from "@components/Navbar/Navbar";
 import About from "@pages/About";
-import Body from "@components/Body";
-import Footer from "@components/Footer";
+import Body from "@components/Body/Body";
+import Footer from "@components/Footer/Footer";
 import Page404 from "@pages/Page404";
 import { SearchParamsProvider } from "@providers/SearchParamsContext";
 import { WeatherProvider } from "@providers/WeatherContext";

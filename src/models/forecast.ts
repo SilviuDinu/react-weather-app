@@ -8,14 +8,14 @@ export class Forecast {
         public timezone: string,
         public currentInfo: ForecastInfo,
         public timezoneOffset?: number,
-        public dailyInfo?: ForecastInfo[],
         public hourlyInfo?: ForecastInfo[],
+        public dailyInfo?: ForecastInfo[],
     ) { }
 }
 
 export class ForecastInfo {
     constructor(
-        public timeOfRequest: Moment,
+        public timeOfRequest: Moment | string,
         public temperature: any,
         public feelsLike: FeelsLike,
         public pressure: number,
@@ -62,7 +62,7 @@ export class WeatherInfo {
 
 export class TemperatureInfo {
     constructor(
-        public current?: number | null,
+        public value?: number | null,
         public min?: number,
         public max?: number,
         public day?: number,

@@ -1,6 +1,6 @@
-import { FORECAST_TYPES } from "@enums/forecast-types.enum";
+import { FORECAST_TYPES, TEMP_TYPE } from "@enums/forecast-types.enum";
 import { Adapter } from "@models/adapter";
-import { Forecast, ForecastInfo, TemperatureInfo, WeatherInfo, WindInfo } from "@models/forecast";
+import { FeelsLike, Forecast, ForecastInfo, TemperatureInfo, WeatherInfo, WindInfo } from "@models/forecast";
 import moment from "moment";
 
 export class ForecastAdapter implements Adapter<Forecast[]> {
@@ -15,16 +15,16 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
     }
 
     adaptOneCall(data: any): Forecast {
-        const { lat, lon, timezone, timezone_offset, current = {}, hourly = [], daily = [] } = data || {};
+        const { lat, lon, timezone, timezone_offset, cityName } = data || {};
         return new Forecast(
-            'random',
+            cityName,
             lat,
             lon,
             timezone,
-            this.getCurrentInfo(current) as ForecastInfo,
+            this.getCurrentInfo(data) as ForecastInfo,
             timezone_offset,
-            this.getHourlyInfo(hourly) as ForecastInfo[],
-            this.getDailyInfo(daily) as ForecastInfo[],
+            this.getHourlyInfo(data) as ForecastInfo[],
+            this.getDailyInfo(data) as ForecastInfo[],
         );
     }
 
@@ -64,18 +64,22 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
     }
 
     getDailyInfo(data: any): any[] {
-        return !!data.length
-            ? data.map((item: any) => {
+        const { daily } = data || {};
+        if (!daily) {
+            return [];
+        }
+        return !!daily.length
+            ? daily.map((item: any) => {
                 return new ForecastInfo(
                     moment.unix(item.dt),
-                    this.getTemperatureInfo(item.temp),
+                    this.getTemperatureInfo(item.temp, TEMP_TYPE.DAILY),
                     item.feels_like,
                     item.pressure,
                     item.humidity,
                     item.clouds,
                     item.visibility,
                     this.getWindInfo(item),
-                    this.getWeatherInfo(item.weather),
+                    this.getWeatherInfo(item.weather[0]),
                     moment.unix(item.sunrise).format("HH:mm"),
                     moment.unix(item.sunset).format("HH:mm"),
                     this.getRainInfo(item.rain),
@@ -87,20 +91,24 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
 
 
     getHourlyInfo(data: any): any[] {
-        return !!data.length
-            ? data.map((item: any) => {
+        const { hourly } = data || {};
+        if (!hourly) {
+            return [];
+        }
+        return !!hourly.length
+            ? hourly.map((item: any) => {
                 return new ForecastInfo(
                     moment.unix(item.dt),
-                    this.getTemperatureInfo(item.temp),
+                    this.getTemperatureInfo(item.temp, TEMP_TYPE.HOURLY),
                     item.feels_like,
                     item.pressure,
                     item.humidity,
                     item.clouds,
                     item.visibility,
                     this.getWindInfo(item),
-                    this.getWeatherInfo(item.weather),
-                    moment.unix(item.sunrise).format("HH:mm"),
-                    moment.unix(item.sunset).format("HH:mm"),
+                    this.getWeatherInfo(item.weather[0]),
+                    undefined,
+                    undefined,
                     this.getRainInfo(item.rain),
                     item.uvi,
                     item.dew_point,
@@ -109,21 +117,25 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
     }
 
     getCurrentInfo(data: any): any {
+        const { current } = data || {};
+        if (!current) {
+            return [];
+        }
         return new ForecastInfo(
-            moment.unix(data.dt),
-            this.getTemperatureInfo(data),
-            data.feels_like,
-            data.pressure,
-            data.humidity,
-            data.clouds,
-            data.visibility,
-            this.getWindInfo(data),
-            this.getWeatherInfo(data.weather),
-            moment.unix(data.sunrise).format("HH:mm"),
-            moment.unix(data.sunset).format("HH:mm"),
-            this.getRainInfo(data.rain),
-            data.uvi,
-            data.dew_point,
+            moment.unix(current.dt),
+            this.getTemperatureInfo(current.temp, TEMP_TYPE.CURRENT, data),
+            current.feels_like,
+            current.pressure,
+            current.humidity,
+            current.clouds,
+            current.visibility,
+            this.getWindInfo(current) || {},
+            this.getWeatherInfo(current.weather[0]),
+            moment.unix(current.sunrise).format("HH:mm"),
+            moment.unix(current.sunset).format("HH:mm"),
+            this.getRainInfo(current.rain),
+            current.uvi,
+            current.dew_point,
         )
     }
 
@@ -136,6 +148,7 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
     }
 
     getWeatherInfo(data: any): WeatherInfo {
+        console.log('weather', data)
         return new WeatherInfo(
             data.id,
             data.main,
@@ -149,32 +162,47 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
         return null;
     }
 
-    getTemperatureInfo(data: any): any {
+    getTemperatureInfo(temp: any, type: TEMP_TYPE, data?: any): any {
+        if (!temp) {
+            return {};
+        }
         let min, max;
-        const { current } = data || {};
-        if (!(current.temp instanceof Object)) {
-            [min, max] = this.getMinMaxTemps(data);
+        const isObj = temp instanceof Object;
+        if (!isObj) {
+            [min, max] = type === TEMP_TYPE.CURRENT
+                ? this.getMinMaxTemps(data)
+                : [undefined, undefined];
+
+            return new TemperatureInfo(
+                temp,
+                min,
+                max
+            );
         }
         return new TemperatureInfo(
-            data.current || null,
-            data.min || min,
-            data.max || max,
-            data.day,
-            data.night,
-            data.eve
-        )
+            undefined,
+            temp.min,
+            temp.max,
+            temp.day,
+            temp.night,
+            temp.eve,
+            temp.morn
+        );
     }
 
-    getMinMaxTemps(data: any) {
+    getMinMaxTemps(allData: any) {
+        const data = allData;
         if (data.daily) {
             const current = moment.unix(data.current.dt);
-            const foundDay = data.daily.find((day: any) => current.diff(day.dt, 'days') === 0);
-            return [foundDay.temp.min, foundDay.temp.max];
+            const foundDay = data.daily.find((day: any) => current.diff(moment.unix(day.dt), 'days') === 0);
+            return foundDay ? [foundDay.temp.min, foundDay.temp.max] : [undefined, undefined];
         }
         if (data.hourly) {
+            const current = moment.unix(data.current.dt);
+            const todayHours = data.hourly.filter((hour: any) => current.diff(hour.dt, 'days') === 0);
             return [
-                Math.min(...data.hourly.map((o: any) => o.temp), 0),
-                Math.max(...data.hourly.map((o: any) => o.temp), 0)
+                Math.min(...todayHours.map((o: any) => o.temp), 0),
+                Math.max(...todayHours.map((o: any) => o.temp), 0)
             ]
         }
         return [undefined, undefined];

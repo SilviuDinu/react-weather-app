@@ -4,7 +4,8 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import CardSummaryInfo from './CardSummaryInfo';
+import CurrentForecastInfo from '../CurrentForecastInfo/CurrentForecastInfo';
+import HourlyForecastInfo from '../HourlyForecastInfo/HourlyForecastInfo';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function Card(props: any) {
-  const { currentInfo } = (props.data as Forecast) || {};
+  const { currentInfo, hourlyInfo } = (props.data as Forecast) || {};
   const classes = useStyles();
 
   const parseWrapperClass = (description: string): string => {
@@ -37,10 +38,10 @@ export default function Card(props: any) {
           id={`weather-card-accordion-${props.id}`}
           className={`weather-card-accordion-summary weather-card-accordion-${props.id}`}
           classes={{ content: 'summary', expanded: 'expanded', expandIcon: 'expanded' }}>
-          <CardSummaryInfo data={currentInfo} title={props.title} />
+          <CurrentForecastInfo data={currentInfo} title={props.title} />
         </AccordionSummary>
         <AccordionDetails classes={{ root: 'expanded' }}>
-          LOREM IPSUM CONTENTLOREM IPSUM CONTENTLOREM IPSUM CONTENTLOREM IPSUM CONTENT
+          <HourlyForecastInfo data={hourlyInfo} />
         </AccordionDetails>
       </Accordion>
     </div>

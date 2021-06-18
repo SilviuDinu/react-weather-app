@@ -1,5 +1,5 @@
 import { NOT_FOUND_PAGE_MESSAGES } from '@enums/404.enum';
-import Button from '@components/Button';
+import Button from '@components/Button/Button';
 import { useHistory } from 'react-router-dom';
 
 export default function Navbar(props: any) {
