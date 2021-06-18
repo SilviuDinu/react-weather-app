@@ -1,0 +1,18 @@
+.footer {
+  margin-top: auto;
+
+  .madeWithLove {
+    display: flex;
+    align-items: center;
+
+    .credits-message {
+      color: white;
+
+      a {
+        text-decoration: none;
+        filter: contrast(0.5);
+        color: blueviolet;
+      }
+    }
+  }
+}

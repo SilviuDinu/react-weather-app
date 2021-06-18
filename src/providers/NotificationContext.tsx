@@ -37,7 +37,7 @@ export const NotificationProvider = (props: any) => {
         <div className={classes.root}>
           <Snackbar
             open={notification.isVisible}
-            autoHideDuration={5000}
+            autoHideDuration={4000}
             onClose={handleClose}
           >
             <Alert

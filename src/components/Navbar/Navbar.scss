@@ -1,0 +1,46 @@
+.nav {
+  background-color: #18191a;
+  display: flex;
+  font-size: 20px;
+  max-height: 70px;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+
+  .nav__logo {
+    width: 45px;
+    height: 45px;
+  }
+
+  .nav__brand {
+    margin-left: 32px;
+  }
+
+  .nav__right {
+    margin-right: 32px;
+    ul {
+      &.nav__item-wrapper {
+        display: flex;
+        align-items: center;
+        list-style-type: none;
+
+        .nav__item {
+          padding: 8px;
+
+          &:not(:last-child) {
+            margin-right: 12px;
+          }
+
+          .nav__link {
+            text-decoration: none;
+            color: #b1b3b8;
+
+            .nav__github {
+              background-color: #b1b3b8;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -32,7 +32,7 @@ module.exports = [
   {
     coord: { lon: 26.1063, lat: 44.4323 },
     weather: [
-      { id: 501, main: "Rain", description: "moderate rain", icon: "10d" },
+      { id: 501, main: "Rain", description: "clear sky", icon: "10d" },
     ],
     base: "stations",
     main: {

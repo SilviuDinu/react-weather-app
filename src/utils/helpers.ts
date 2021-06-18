@@ -9,7 +9,7 @@ export const buildSearchParams = (params: any) => {
 export const getObjIndexFromArray = (haystack: any[], needle: any): number => {
     return haystack.indexOf(
         haystack.find(
-            (hay: any) => hay.name.toLowerCase() === needle.name.toLowerCase()
+            (hay: any) => hay.city.toLowerCase() === needle.city.toLowerCase()
         )
     );
 }
@@ -36,7 +36,7 @@ export const areCoordsInArray = (arr: any[], coords: Coords): boolean => {
     const parsedLat = parseFloat((lat as number).toFixed(3));
     const parsedLon = parseFloat((lon as number).toFixed(3));
     return arr.some((item: any) => (
-        isCloseEnough(item.coord.lat, parsedLat) && isCloseEnough(item.coord.lon, parsedLon)
+        isCloseEnough(item.lat, parsedLat) && isCloseEnough(item.lon, parsedLon)
     ));
 }
 
