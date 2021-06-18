@@ -9,12 +9,12 @@ export default function HourlyForecastInfo(props: any) {
 
   return (
     <>
-      {data.map((hour: ForecastInfo): any => {
+      {data.map((hour: ForecastInfo, idx: number): any => {
         return (
-          <div className="hourly-weather-info">
+          <div key={idx} className="hourly-weather-info">
             <div className="weather-card-temp-wrapper">
               <span className="weather-card-temp hour">
-                {moment.unix((hour as any)?.timeOfRequest).format('HH:mm')}
+                {hour?.timeOfRequest.format('HH:mm')}
               </span>
               <span className="weather-card-temp current">
                 {`${parseInt(hour?.temperature?.value)}`} {SYMBOLS.CELSIULS}

@@ -1,6 +1,7 @@
 import { MISC } from "@enums/misc.enum";
 import { SYMBOLS } from "@enums/symbols.enum";
 import { capitalize } from "lodash";
+import moment from "moment";
 
 export default function CurrentForecastInfo(props: any) {
   const { data } = props;
@@ -32,8 +33,8 @@ export default function CurrentForecastInfo(props: any) {
         <span className="weather-card-temp humidity">{`Humidity: ${data?.humidity}%`}</span>
       </div>
       <div className="weather-card-sunrise-sunset">
-        <span className="weather-card-sunrise">{`Sunrise: ${data?.sunrise}`}</span>
-        <span className="weather-card-sunset">{`Sunset: ${data?.sunset}`}</span>
+        <span className="weather-card-sunrise">{`Sunrise: ${data?.sunrise.format('HH:mm')}`}</span>
+        <span className="weather-card-sunset">{`Sunset: ${data?.sunset.format('HH:mm')}`}</span>
         <span className="weather-card-disclaimer">{MISC.LOCAL_TIMEZONE_DISCLAIMER}</span>
       </div>
     </div>

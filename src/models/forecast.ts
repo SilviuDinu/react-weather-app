@@ -15,7 +15,7 @@ export class Forecast {
 
 export class ForecastInfo {
     constructor(
-        public timeOfRequest: Moment | string,
+        public timeOfRequest: Moment,
         public temperature: any,
         public feelsLike: FeelsLike,
         public pressure: number,
@@ -24,8 +24,8 @@ export class ForecastInfo {
         public visibility: number,
         public wind: WindInfo,
         public weather: WeatherInfo,
-        public sunrise?: Moment | string,
-        public sunset?: Moment | string,
+        public sunrise?: Moment,
+        public sunset?: Moment,
         public rain?: any,
         public uvIndex?: number,
         public dewPoint?: number,

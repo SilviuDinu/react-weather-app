@@ -57,63 +57,69 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
                     weather[0].main,
                     weather[0].description,
                     weather[0].icon),
-                moment.unix(sys.sunrise).format("HH:mm"),
-                moment.unix(sys.sunset).format("HH:mm"),
+                moment.unix(sys.sunrise),
+                moment.unix(sys.sunset),
             )
         );
     }
 
     getDailyInfo(data: any): any[] {
-        const { daily } = data || {};
+        const { daily, current } = data || {};
         if (!daily) {
             return [];
         }
+        const currentInfoTime = moment.unix(current.dt);
         return !!daily.length
-            ? daily.map((item: any) => {
-                return new ForecastInfo(
-                    moment.unix(item.dt),
-                    this.getTemperatureInfo(item.temp, TEMP_TYPE.DAILY),
-                    item.feels_like,
-                    item.pressure,
-                    item.humidity,
-                    item.clouds,
-                    item.visibility,
-                    this.getWindInfo(item),
-                    this.getWeatherInfo(item.weather[0]),
-                    moment.unix(item.sunrise).format("HH:mm"),
-                    moment.unix(item.sunset).format("HH:mm"),
-                    this.getRainInfo(item.rain),
-                    item.uvi,
-                    item.dew_point,
-                )
-            }) : [];
+            ? daily
+                .filter((day: any) => moment.unix(day.dt).diff(currentInfoTime, 'days') < 7)
+                .map((item: any) => {
+                    return new ForecastInfo(
+                        moment.unix(item.dt),
+                        this.getTemperatureInfo(item.temp, TEMP_TYPE.DAILY),
+                        item.feels_like,
+                        item.pressure,
+                        item.humidity,
+                        item.clouds,
+                        item.visibility,
+                        this.getWindInfo(item),
+                        this.getWeatherInfo(item.weather[0]),
+                        moment.unix(item.sunrise),
+                        moment.unix(item.sunset),
+                        this.getRainInfo(item.rain),
+                        item.uvi,
+                        item.dew_point,
+                    )
+                }) : [];
     }
 
 
     getHourlyInfo(data: any): any[] {
-        const { hourly } = data || {};
+        const { hourly, current } = data || {};
         if (!hourly) {
             return [];
         }
+        const currentInfoTime = moment.unix(current.dt);
         return !!hourly.length
-            ? hourly.map((item: any) => {
-                return new ForecastInfo(
-                    moment.unix(item.dt),
-                    this.getTemperatureInfo(item.temp, TEMP_TYPE.HOURLY),
-                    item.feels_like,
-                    item.pressure,
-                    item.humidity,
-                    item.clouds,
-                    item.visibility,
-                    this.getWindInfo(item),
-                    this.getWeatherInfo(item.weather[0]),
-                    undefined,
-                    undefined,
-                    this.getRainInfo(item.rain),
-                    item.uvi,
-                    item.dew_point,
-                )
-            }) : [];
+            ? hourly
+                .filter((hour: any, idx: number) => moment.unix(hour.dt).diff(currentInfoTime, 'days') < 1 && idx % 2 === 0)
+                .map((item: any) => {
+                    return new ForecastInfo(
+                        moment.unix(item.dt),
+                        this.getTemperatureInfo(item.temp, TEMP_TYPE.HOURLY),
+                        item.feels_like,
+                        item.pressure,
+                        item.humidity,
+                        item.clouds,
+                        item.visibility,
+                        this.getWindInfo(item),
+                        this.getWeatherInfo(item.weather[0]),
+                        undefined,
+                        undefined,
+                        this.getRainInfo(item.rain),
+                        item.uvi,
+                        item.dew_point,
+                    )
+                }) : [];
     }
 
     getCurrentInfo(data: any): any {
@@ -131,8 +137,8 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
             current.visibility,
             this.getWindInfo(current) || {},
             this.getWeatherInfo(current.weather[0]),
-            moment.unix(current.sunrise).format("HH:mm"),
-            moment.unix(current.sunset).format("HH:mm"),
+            moment.unix(current.sunrise),
+            moment.unix(current.sunset),
             this.getRainInfo(current.rain),
             current.uvi,
             current.dew_point,
@@ -148,7 +154,6 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
     }
 
     getWeatherInfo(data: any): WeatherInfo {
-        console.log('weather', data)
         return new WeatherInfo(
             data.id,
             data.main,
