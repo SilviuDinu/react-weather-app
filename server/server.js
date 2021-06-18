@@ -126,7 +126,7 @@ app.get('/mockapi/current/coords-to-city', (req, res, next) => {
 });
 
 app.get('/mockapi/current/city-to-coords', (req, res, next) => {
-  const { cityName } = req.query;
+  const { cityName = coordsByCity[0].name } = req.query;
   try {
     res.json({ lat: coordsByCity[0].lat, lon: coordsByCity[0].lon, cityName });
   } catch (error) {

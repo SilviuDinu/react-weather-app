@@ -9,7 +9,8 @@
     padding: 8px 32px 8px 32px;
     margin: 8px;
     display: flex;
-    font-size: 16px;
+    font-size: 17px;
+    font-weight: 400;
     background-size: cover;
     box-shadow: none;
     animation: animatedBackground 30s linear infinite;
@@ -62,24 +63,24 @@
     }
 
     &.clear-sky {
-      background-image: url('../../media/images/clear_sky.png');
+      background-image: url('../../media/images/forecast/clear_sky.png');
       background-position: 50% 50%;
     }
 
     &.overcast-clouds {
-      background-image: url('../../media/images/overcast_clouds.png');
+      background-image: url('../../media/images/forecast/overcast_clouds.png');
     }
 
     &.few-clouds {
-      background-image: url('../../media/images/few_clouds.png');
+      background-image: url('../../media/images/forecast/few_clouds.png');
     }
 
-    &.moderate-rain {
-      background-image: url('../../media/images/moderate_rain.png');
-    }
+    // &.moderate-rain {
+    //   background-image: url('../../media/images/forecast/moderate_rain.png');
+    // }
 
     &.broken-clouds {
-      background-image: url('../../media/images/broken_clouds.png');
+      background-image: url('../../media/images/forecast/broken_clouds.png');
     }
 
     .weather-card-accordion-summary {

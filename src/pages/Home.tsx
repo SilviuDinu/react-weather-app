@@ -46,27 +46,29 @@ export default function Home(props: any) {
       if (!coords.loading && coords.lat !== null && coords.lon !== null) {
         if (!areCoordsInArray(weather, coords)) {
           setLoading(coords.loading);
-          api
-            .getWeatherByCoords({ lat: coords.lat, lon: coords.lon })
-            .then((response: Forecast) => {
-              if (isMounted.current) {
-                updateWeather(response);
-                setNotification({
-                  severity: 'success',
-                  message: `${MESSAGES.INITIAL_SUCCESS} - ${response.city}`,
-                  isVisible: true,
-                });
-              }
-            })
-            .catch((err: any) => {
-              if (isMounted.current) {
-                setNotification({
-                  severity: 'error',
-                  message: MESSAGES.GENERIC_ERROR,
-                  isVisible: true,
-                });
-              }
-            });
+          api.getCoordsByCity(searchParams.searchValue).then((res: any) => {
+            api
+              .getAllWeatherByCoords({ lat: coords.lat, lon: coords.lon, cityName: res.cityName })
+              .then((response: Forecast) => {
+                if (isMounted.current) {
+                  updateWeather(response);
+                  setNotification({
+                    severity: 'success',
+                    message: `${MESSAGES.INITIAL_SUCCESS} - ${response.city}`,
+                    isVisible: true,
+                  });
+                }
+              })
+              .catch((err: any) => {
+                if (isMounted.current) {
+                  setNotification({
+                    severity: 'error',
+                    message: MESSAGES.GENERIC_ERROR,
+                    isVisible: true,
+                  });
+                }
+              });
+          });
         }
       }
     }
@@ -76,10 +78,11 @@ export default function Home(props: any) {
     if (isMounted.current && searchParams.submitted) {
       setLoading(true);
       api.getCoordsByCity(searchParams.searchValue).then((res: any) => {
-        api.getAllWeatherByCoords({ ...res, units: 'metric' })
+        api
+          .getAllWeatherByCoords({ ...res, units: 'metric' })
           .then((response: Forecast) => {
             if (isMounted.current) {
-              console.log(response)
+              console.log(response);
               updateWeather(response);
               setSearchParams({
                 ...searchParams,
