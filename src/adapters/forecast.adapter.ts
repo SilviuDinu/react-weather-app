@@ -102,9 +102,8 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
             return [];
         }
         const currentInfoTime = moment.unix(current.dt);
-        /* filter hours so that we only take the hours from today,
+        /* filter hours so that we only take 5 hours ahead,
          the hours that are passed the time when the request was made,
-         and reduce them to half
         */
         return !!hourly.length
             ? hourly
@@ -112,8 +111,8 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
                     const hourTime = moment.unix(hour.dt);
                     return hourTime.diff(currentInfoTime, 'days') < 1
                         && hourTime.diff(currentInfoTime, 'hours') > 0
-                        && hourTime.isSame(currentInfoTime, 'day')
-                        && idx % 2 === 0
+                        && hourTime.diff(currentInfoTime, 'hours') < 6
+
                 })
                 .map((item: any) => {
                     return new ForecastInfo(

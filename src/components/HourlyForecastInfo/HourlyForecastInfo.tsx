@@ -7,7 +7,7 @@ import Chart from "@components/Chart/Chart";
 export default function HourlyForecastInfo(props: any) {
   const { data } = props;
   const [chartData] = useState<number[]>(
-    data.map((hour: ForecastInfo) => hour?.temperature?.value)
+    data.map((hour: ForecastInfo) => parseInt(hour?.temperature?.value))
   );
 
   return (
@@ -35,7 +35,9 @@ export default function HourlyForecastInfo(props: any) {
           );
         })}
       </div>
-      {chartData.length === data.length ? <Chart data={chartData} /> : null}
+      {chartData.length === data.length ? (
+        <Chart data={chartData} min={Math.min(...chartData)} />
+      ) : null}
     </div>
   );
 }

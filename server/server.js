@@ -152,7 +152,7 @@ app.get("/api/current/city-to-coords", (req, res, next) => {
       `https://${WEATHER_API_GEOCODING}/direct?q=${cityName},${countryCode}&appid=${API_KEY}`
     )
     .then((response) => {
-      res.json({ ...response.data[0], cityName: response.data[0].name });
+      res.json({ ...response.data[0], cityName });
     })
     .catch((error) => {
       next(error);

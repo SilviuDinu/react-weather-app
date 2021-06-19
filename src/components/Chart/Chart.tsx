@@ -1,13 +1,14 @@
 import { Sparklines, SparklinesLine, SparklinesText } from "react-sparklines";
 
 export default function Chart(props: any) {
-  const { data } = props;
+  const { data, min = 0 } = props;
   return (
     <div className="temp-chart">
       <Sparklines
         data={[...data]}
         width={100}
-        height={12.5}
+        height={15}
+        min={min / 2}
         max={Math.max(...data)}
       >
         <SparklinesLine

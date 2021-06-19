@@ -11,10 +11,8 @@
     display: flex;
     font-size: 17px;
     font-weight: 400;
-    background-size: cover;
+    // background-size: cover;
     box-shadow: none;
-    animation: animatedBackground 30s linear infinite;
-    animation-fill-mode: forwards;
 
     @media (max-width: 992px) {
       width: 100%;
@@ -59,22 +57,42 @@
     &.clear-sky {
       background-image: url("../../media/images/forecast/clear_sky.png");
       background-position: 50% 50%;
+      animation: animatedBackground 30s linear infinite;
+      animation-fill-mode: forwards;
     }
 
     &.overcast-clouds {
       background-image: url("../../media/images/forecast/overcast_clouds.png");
+      background-position: 50% 50%;
+      animation: animatedBackground 30s linear infinite;
+      animation-fill-mode: forwards;
     }
 
     &.few-clouds {
       background-image: url("../../media/images/forecast/few_clouds.png");
+      background-position: 50% 50%;
+      animation: animatedBackground 30s linear infinite;
+      animation-fill-mode: forwards;
     }
 
-    // &.moderate-rain {
-    //   background-image: url('../../media/images/forecast/moderate_rain.png');
-    // }
+    &.moderate-rain {
+      background-image: url("../../media/images/forecast/moderate_rain.png");
+      animation: animatedBackgroundVertical 60s linear infinite;
+      animation-fill-mode: forwards;
+    }
 
     &.broken-clouds {
       background-image: url("../../media/images/forecast/broken_clouds.png");
+      background-position: 50% 50%;
+      animation: animatedBackground 30s linear infinite;
+      animation-fill-mode: forwards;
+    }
+
+    &.light-rain {
+      background-image: url("../../media/images/forecast/light_rain.png");
+      background-size: cover;
+      // animation: animatedBackgroundVertical 60s linear infinite;
+      // animation-fill-mode: forwards;
     }
 
     .weather-card-accordion-summary {
@@ -210,6 +228,29 @@
     }
     50% {
       background-position: 100% 0;
+    }
+    100% {
+      background-position: 0 0;
+    }
+  }
+  @keyframes animatedBackgroundVertical {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 0 100%;
+    }
+    100% {
+      background-position: 0 0;
+    }
+  }
+
+  @-webkit-keyframes animatedBackgroundVertical {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 0 100%;
     }
     100% {
       background-position: 0 0;
