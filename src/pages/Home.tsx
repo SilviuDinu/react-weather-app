@@ -1,28 +1,28 @@
-import { HOME_MESSAGES } from '@enums/home.enum';
-import SearchForm from '@components/SearchForm/SearchForm';
-import Loader from '@components/Loader/Loader';
-import CardGroup from '@components/CardGroup/CardGroup';
-import { SearchParamsContext } from '@providers/SearchParamsContext';
-import { WeatherContext } from '@providers/WeatherContext';
-import { areCoordsInArray, exists, getObjIndexFromArray } from '@utils/helpers';
-import { useContext, useEffect, useRef } from 'react';
-import { FORM_DATA } from '@enums/search-form.enum';
-import { CoordsContext } from '@providers/CoordsContext';
-import { NotificationContext } from '@providers/NotificationContext';
-import { LoadingContext } from '@providers/LoadingContext';
-import { MESSAGES } from '@enums/misc.enum';
-import Api from '@utils/api';
-import { Forecast } from '@models/forecast';
+import { HOME_MESSAGES } from "@enums/home.enum";
+import SearchForm from "@components/SearchForm/SearchForm";
+import Loader from "@components/Loader/Loader";
+import CardGroup from "@components/CardGroup/CardGroup";
+import { SearchParamsContext } from "@providers/SearchParamsContext";
+import { WeatherContext } from "@providers/WeatherContext";
+import { areCoordsInArray, exists, getObjIndexFromArray } from "@utils/helpers";
+import { useContext, useEffect, useRef } from "react";
+import { FORM_DATA } from "@enums/search-form.enum";
+import { CoordsContext } from "@providers/CoordsContext";
+import { NotificationContext } from "@providers/NotificationContext";
+import { LoadingContext } from "@providers/LoadingContext";
+import { MESSAGES } from "@enums/misc.enum";
+import Api from "@utils/api";
+import { Forecast } from "@models/forecast";
 
 const formData = {
   input: {
     placeholder: FORM_DATA.PLACEHOLDER,
     ariaLabel: FORM_DATA.ARIA_LABEL,
-    class: 'city-search-form-input',
+    class: "city-search-form-input",
     autoComplete: false,
   },
   buttonText: FORM_DATA.BUTTON_TEXT,
-  class: 'city-search-form',
+  class: "city-search-form",
 };
 
 const api = new Api();
@@ -46,29 +46,35 @@ export default function Home(props: any) {
       if (!coords.loading && coords.lat !== null && coords.lon !== null) {
         if (!areCoordsInArray(weather, coords)) {
           setLoading(coords.loading);
-          api.getCoordsByCity(searchParams.searchValue).then((res: any) => {
-            api
-              .getAllWeatherByCoords({ lat: coords.lat, lon: coords.lon, cityName: res.cityName })
-              .then((response: Forecast) => {
-                if (isMounted.current) {
-                  updateWeather(response);
-                  setNotification({
-                    severity: 'success',
-                    message: `${MESSAGES.INITIAL_SUCCESS} - ${response.city}`,
-                    isVisible: true,
-                  });
-                }
-              })
-              .catch((err: any) => {
-                if (isMounted.current) {
-                  setNotification({
-                    severity: 'error',
-                    message: MESSAGES.GENERIC_ERROR,
-                    isVisible: true,
-                  });
-                }
-              });
-          });
+          api
+            .getCityByCoords({ lat: coords.lat, lon: coords.lon })
+            .then((res: any) => {
+              api
+                .getAllWeatherByCoords({
+                  lat: coords.lat,
+                  lon: coords.lon,
+                  cityName: res.cityName,
+                })
+                .then((response: Forecast) => {
+                  if (isMounted.current) {
+                    updateWeather(response);
+                    setNotification({
+                      severity: "success",
+                      message: `${MESSAGES.INITIAL_SUCCESS} - ${response.city}`,
+                      isVisible: true,
+                    });
+                  }
+                })
+                .catch((err: any) => {
+                  if (isMounted.current) {
+                    setNotification({
+                      severity: "error",
+                      message: MESSAGES.GENERIC_ERROR,
+                      isVisible: true,
+                    });
+                  }
+                });
+            });
         }
       }
     }
@@ -79,18 +85,18 @@ export default function Home(props: any) {
       setLoading(true);
       api.getCoordsByCity(searchParams.searchValue).then((res: any) => {
         api
-          .getAllWeatherByCoords({ ...res, units: 'metric' })
+          .getAllWeatherByCoords({ ...res, units: "metric" })
           .then((response: Forecast) => {
             if (isMounted.current) {
               console.log(response);
               updateWeather(response);
               setSearchParams({
                 ...searchParams,
-                searchValue: '',
+                searchValue: "",
                 submitted: false,
               });
               setNotification({
-                severity: 'success',
+                severity: "success",
                 message: MESSAGES.GENERIC_SUCCESS,
                 isVisible: true,
               });
@@ -99,7 +105,7 @@ export default function Home(props: any) {
           .catch((err: any) => {
             if (isMounted.current) {
               setNotification({
-                severity: 'error',
+                severity: "error",
                 message: MESSAGES.GENERIC_ERROR,
                 isVisible: true,
               });
@@ -128,7 +134,11 @@ export default function Home(props: any) {
       <div className="home-page-content">
         <SearchForm form={formData} />
         {/* try to display forecast based on current location */}
-        {coords.loading && !coords.error ? <Loader isLoading={coords.loading} /> : <CardGroup />}
+        {coords.loading && !coords.error ? (
+          <Loader isLoading={coords.loading} />
+        ) : (
+          <CardGroup />
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { MISC } from "@enums/misc.enum";
 import { SYMBOLS } from "@enums/symbols.enum";
 import { capitalize } from "lodash";
 import moment from "moment";
+import hot from "@media/images/temperature/hot.svg";
 
 export default function CurrentForecastInfo(props: any) {
   const { data } = props;
@@ -27,18 +28,37 @@ export default function CurrentForecastInfo(props: any) {
         </span>
       </div>
       <div className="weather-card-temp-wrapper">
-        {/* <span className="weather-card-temp current">
-          {`Temp: ${parseInt(data?.temperature?.value)}`}{SYMBOLS.CELSIULS}
-        </span> */}
         <span className="weather-card-temp high">
+          {/* <img
+            src={require(`@media/images/temperature/hot.svg`).default}
+            className="temp-hot"
+            width="30"
+            height="auto"
+            alt="logo"
+          /> */}
           {`Max: ${parseInt(data?.temperature?.max)}`}
           {SYMBOLS.CELSIULS}
         </span>
         <span className="weather-card-temp low">
+          {/* <img
+            src={require(`@media/images/temperature/cold.svg`).default}
+            className="temp-hot"
+            width="30"
+            height="auto"
+            alt="logo"
+          /> */}
           {`Min: ${parseInt(data?.temperature?.min)}`}
           {SYMBOLS.CELSIULS}
         </span>
-        <span className="weather-card-temp humidity">{`Humidity: ${data?.humidity}%`}</span>
+        <span className="weather-card-temp humidity">
+        {/* <img
+            src={require(`@media/images/temperature/humidity.svg`).default}
+            className="temp-humidity"
+            width="30"
+            height="auto"
+            alt="logo"
+          /> */}
+          {`Humidity: ${data?.humidity}%`}</span>
       </div>
       <div className="weather-card-sunrise-sunset">
         <span className="weather-card-sunrise">{`Sunrise: ${data?.sunrise.format(

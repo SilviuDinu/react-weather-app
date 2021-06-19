@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       background: "none",
       boxShadow: "none",
-      padding: "8px 0px 0px",
+      padding: "8px 0px 8px",
       width: "100%",
       margin: "0",
     },

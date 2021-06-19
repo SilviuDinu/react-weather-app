@@ -26,7 +26,7 @@ export default class Api {
 
     };
 
-    getLocationByCoords = async (params: any): Promise<any> => {
+    getCityByCoords = async (params: any): Promise<any> => {
         const query = buildSearchParams(params);
         const promise = fetch(ENDPOINTS.GET_LOCATION_BY_COORDS + query, {
             method: "GET",
