@@ -20,18 +20,18 @@ const BASE_URL = process.env.WEATHER_API_BASE_URL;
 const WEATHER_API_GEOCODING = process.env.WEATHER_API_GEOCODING;
 
 const app = express();
-const port = process.env.PORT || 3001;
-app.use(express.static(path.join("../build")));
-
-app.listen(port, () => {
-  console.log("Running on port " + port);
-});
 app.enable("trust proxy");
 app.use(helmet());
 app.use(helmet.contentSecurityPolicy(middleware));
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
+const port = process.env.PORT || 3001;
+app.use(express.static(path.join("../build")));
+
+app.listen(port, () => {
+  console.log("Running on port " + port);
+});
 
 // API
 app.get("/", async (req, res) => {
@@ -194,7 +194,9 @@ app.get("/mockapi/current/coords-to-city", (req, res, next) => {
 app.get("/mockapi/current/city-to-coords", (req, res, next) => {
   const { cityName } = req.query;
   try {
-    const result = coordsByCity.find((item) => item.name.toLowerCase() === cityName.toLowerCase());
+    const result = coordsByCity.find(
+      (item) => item.name.toLowerCase() === cityName.toLowerCase()
+    );
     result
       ? res.json({ lat: result.lat, lon: result.lon, cityName })
       : next({ message: "error" });

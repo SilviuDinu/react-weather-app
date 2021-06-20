@@ -21,14 +21,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Card(props: any) {
   const { currentInfo, hourlyInfo } = (props.data as Forecast) || {};
+  
   const classes = useStyles();
-  console.log(props.data);
   const parseWrapperClass = (description: string): string => {
     if (!description) {
       return "";
     }
     return description.split(" ").join("-");
   };
+
+
   return (
     <div
       className={`weather-card-wrapper ${parseWrapperClass(

@@ -1,8 +1,6 @@
 import { MISC } from "@enums/misc.enum";
 import { SYMBOLS } from "@enums/symbols.enum";
 import { capitalize } from "lodash";
-import moment from "moment";
-import hot from "@media/images/temperature/hot.svg";
 
 export default function CurrentForecastInfo(props: any) {
   const { data } = props;

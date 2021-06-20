@@ -4,7 +4,11 @@ import Loader from "@components/Loader/Loader";
 import CardGroup from "@components/CardGroup/CardGroup";
 import { SearchParamsContext } from "@providers/SearchParamsContext";
 import { WeatherContext } from "@providers/WeatherContext";
-import { areCoordsInArray, exists, getObjIndexFromArray } from "@utils/helpers";
+import {
+  areCoordsInArray,
+  getLoadingId,
+  getObjIndexFromArray,
+} from "@utils/helpers";
 import { useContext, useEffect, useRef } from "react";
 import { FORM_DATA } from "@enums/search-form.enum";
 import { CoordsContext } from "@providers/CoordsContext";
@@ -29,8 +33,8 @@ const api = new Api();
 
 export default function Home(props: any) {
   const isMounted = useRef(true);
-  const [notification, setNotification] = useContext(NotificationContext);
-  const [loading, setLoading] = useContext(LoadingContext);
+  const [, setNotification] = useContext(NotificationContext);
+  const [, setLoading] = useContext(LoadingContext);
   const [searchParams, setSearchParams] = useContext(SearchParamsContext);
   const [coords] = useContext(CoordsContext);
   const [weather, setWeather] = useContext(WeatherContext);
@@ -45,7 +49,7 @@ export default function Home(props: any) {
     if (isMounted.current) {
       if (!coords.loading && coords.lat !== null && coords.lon !== null) {
         if (!areCoordsInArray(weather, coords)) {
-          setLoading(coords.loading);
+          setLoading({ isLoading: coords.loading });
           api
             .getCityByCoords({ lat: coords.lat, lon: coords.lon })
             .then((res: any) => {
@@ -58,11 +62,9 @@ export default function Home(props: any) {
                 .then((response: Forecast) => {
                   if (isMounted.current) {
                     updateWeather(response);
-                    setNotification({
-                      severity: "success",
-                      message: `${MESSAGES.INITIAL_SUCCESS} - ${response.city}`,
-                      isVisible: true,
-                    });
+                    handleSuccess(
+                      `${MESSAGES.INITIAL_SUCCESS} - ${response.city}`
+                    );
                   }
                 })
                 .catch((err: any) => {
@@ -73,7 +75,10 @@ export default function Home(props: any) {
                       isVisible: true,
                     });
                   }
-                });
+                })
+                .finally(() =>
+                  isMounted.current ? setLoading({ isLoading: false }) : null
+                );
             });
         }
       }
@@ -82,38 +87,45 @@ export default function Home(props: any) {
 
   useEffect(() => {
     if (isMounted.current && searchParams.submitted) {
-      setLoading(true);
-      api.getCoordsByCity(searchParams.searchValue).then((res: any) => {
-        api
-          .getAllWeatherByCoords({ ...res, units: "metric" })
-          .then((response: Forecast) => {
-            if (isMounted.current) {
-              console.log(response);
-              updateWeather(response);
-              setSearchParams({
-                ...searchParams,
-                searchValue: "",
-                submitted: false,
-              });
-              setNotification({
-                severity: "success",
-                message: MESSAGES.GENERIC_SUCCESS,
-                isVisible: true,
-              });
-            }
-          })
-          .catch((err: any) => {
-            if (isMounted.current) {
-              setNotification({
-                severity: "error",
-                message: MESSAGES.GENERIC_ERROR,
-                isVisible: true,
-              });
-              throw new Error(err);
-            }
-          })
-          .finally(() => (isMounted.current ? setLoading(false) : null));
+      const loadingId = getLoadingId(weather, searchParams.searchValue);
+      setLoading({
+        isLoading: true,
+        id: loadingId,
+        isNext: !weather[loadingId],
       });
+      api
+        .getCoordsByCity(searchParams.searchValue)
+        .then((res: any) => {
+          api
+            .getAllWeatherByCoords({ ...res, units: "metric" })
+            .then((response: Forecast) => {
+              if (isMounted.current) {
+                updateWeather(response);
+                setSearchParams({
+                  ...searchParams,
+                  searchValue: "",
+                  submitted: false,
+                });
+                handleSuccess(MESSAGES.GENERIC_SUCCESS);
+              }
+            })
+            .catch((err: any) => {
+              if (isMounted.current) {
+                handleErr(err, MESSAGES.GENERIC_ERROR);
+              }
+            })
+            .finally(() => {
+              if (isMounted.current) {
+                handleStopLoading();
+              }
+            });
+        })
+        .catch((err: any) => {
+          if (isMounted.current) {
+            handleStopLoading();
+            handleErr(MESSAGES.GENERIC_ERROR, err);
+          }
+        });
     }
   }, [searchParams.submitted]);
 
@@ -126,6 +138,29 @@ export default function Home(props: any) {
     } else {
       setWeather((weather: any[]) => [...weather, item]);
     }
+  };
+
+  const handleErr = (message: MESSAGES, err?: any): void => {
+    setNotification({
+      severity: "error",
+      message,
+      isVisible: true,
+    });
+  };
+
+  const handleSuccess = (message: MESSAGES | string): void => {
+    setNotification({
+      severity: "success",
+      message,
+      isVisible: true,
+    });
+  };
+
+  const handleStopLoading = (): void => {
+    setLoading({
+      isLoading: false,
+      isNext: false,
+    });
   };
 
   return (

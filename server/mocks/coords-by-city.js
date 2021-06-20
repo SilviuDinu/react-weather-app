@@ -32,4 +32,16 @@ module.exports = [
     lon: 23.8184,
     country: "RO",
   },
+  {
+    name: "London",
+    local_names: {
+      ascii: "Cluj",
+      de: "Kreis Klausenburg",
+      feature_name: "Cluj",
+      hu: "Kolozs megye",
+    },
+    lat: 46.6494,
+    lon: 23.8184,
+    country: "RO",
+  },
 ];

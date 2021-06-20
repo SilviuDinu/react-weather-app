@@ -1,6 +1,6 @@
 import { FORECAST_TYPES, TEMP_TYPE } from "@enums/forecast-types.enum";
 import { Adapter } from "@models/adapter";
-import { FeelsLike, Forecast, ForecastInfo, TemperatureInfo, WeatherInfo, WindInfo } from "@models/forecast";
+import { Forecast, ForecastInfo, TemperatureInfo, WeatherInfo, WindInfo } from "@models/forecast";
 import moment from "moment";
 
 export class ForecastAdapter implements Adapter<Forecast[]> {

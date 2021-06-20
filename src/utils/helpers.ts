@@ -43,3 +43,11 @@ export const areCoordsInArray = (arr: any[], coords: Coords): boolean => {
 export const isCloseEnough = (reference: any, value: any, treshold = 0.05): boolean => {
     return Math.abs(parseFloat(reference.toFixed(3))) - value < treshold;
 }
+
+export const getLoadingId = (data: any[], value: any): number => {
+    const idx = getObjIndexFromArray(data, { city: value });
+    if (!idx || idx < 0) {
+        return data.length;
+    }
+    return idx;
+}
