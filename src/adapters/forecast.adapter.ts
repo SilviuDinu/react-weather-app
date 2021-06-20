@@ -109,9 +109,11 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
             ? hourly
                 .filter((hour: any, idx: number) => {
                     const hourTime = moment.unix(hour.dt);
-                    return hourTime.diff(currentInfoTime, 'days') < 1
-                        && hourTime.diff(currentInfoTime, 'hours') > 0
-                        && hourTime.diff(currentInfoTime, 'hours') < 6
+                    const diffHours = hourTime.diff(currentInfoTime, 'hours');
+                    const diffDays = hourTime.diff(currentInfoTime, 'days');
+                    return diffDays < 1
+                        && diffHours > 0
+                        && diffHours < 6
 
                 })
                 .map((item: any) => {

@@ -55,41 +55,53 @@
     }
 
     &.clear-sky {
-      background-image: url("../../media/images/forecast/clear_sky.png");
-      background-position: 50% 50%;
-      animation: animatedBackground 30s linear infinite;
+      background-image: url('../../media/images/forecast/clear_sky.png');
+      background-size: 120% 100%;
+      animation: animatedBackground 75s linear infinite;
       animation-fill-mode: forwards;
+      
+      @media screen and (max-width: 768px) {
+        background-size: cover;
+      }
     }
 
     &.overcast-clouds {
-      background-image: url("../../media/images/forecast/overcast_clouds.png");
-      background-position: 50% 50%;
-      animation: animatedBackground 30s linear infinite;
+      background-image: url('../../media/images/forecast/overcast_clouds_2.png');
+      background-size: cover;
+      animation: animatedBackground 75s linear infinite;
       animation-fill-mode: forwards;
+      
+      @media screen and (max-width: 768px) {
+        background-size: cover;
+      }
     }
 
     &.few-clouds {
-      background-image: url("../../media/images/forecast/few_clouds.png");
-      background-position: 50% 50%;
-      animation: animatedBackground 30s linear infinite;
+      background-image: url('../../media/images/forecast/few_clouds.png');
+      background-size: cover;
+      animation: animatedBackground 75s linear infinite;
       animation-fill-mode: forwards;
+      
+      @media screen and (max-width: 768px) {
+        background-size: cover;
+      }
     }
 
     &.moderate-rain {
-      background-image: url("../../media/images/forecast/moderate_rain.png");
+      background-image: url('../../media/images/forecast/light_rain.png');
       animation: animatedBackgroundVertical 60s linear infinite;
       animation-fill-mode: forwards;
     }
 
     &.broken-clouds {
-      background-image: url("../../media/images/forecast/broken_clouds.png");
+      background-image: url('../../media/images/forecast/overcast_clouds_2.png');
       background-position: 50% 50%;
       animation: animatedBackground 30s linear infinite;
       animation-fill-mode: forwards;
     }
 
     &.light-rain {
-      background-image: url("../../media/images/forecast/light_rain.png");
+      background-image: url('../../media/images/forecast/light_rain.png');
       background-size: cover;
       // animation: animatedBackgroundVertical 60s linear infinite;
       // animation-fill-mode: forwards;
