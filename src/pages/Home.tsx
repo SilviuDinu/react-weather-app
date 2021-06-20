@@ -62,18 +62,12 @@ export default function Home(props: any) {
                 .then((response: Forecast) => {
                   if (isMounted.current) {
                     updateWeather(response);
-                    handleSuccess(
-                      `${MESSAGES.INITIAL_SUCCESS} - ${response.city}`
-                    );
+                    handleSuccess(`${MESSAGES.INITIAL_SUCCESS} - ${response.city}`);
                   }
                 })
                 .catch((err: any) => {
                   if (isMounted.current) {
-                    setNotification({
-                      severity: "error",
-                      message: MESSAGES.GENERIC_ERROR,
-                      isVisible: true,
-                    });
+                    handleErr(MESSAGES.GENERIC_ERROR, err);
                   }
                 })
                 .finally(() =>
