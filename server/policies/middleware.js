@@ -21,16 +21,11 @@ module.exports = middleware = {
       "https://fonts.gstatic.com",
       "https://cdnjs.cloudflare.com",
     ],
-    styleSrc: [
-      "'self'", // Default policy for valid sources for stylesheets: allow all content coming from origin (without subdomains).
-      "'unsafe-inline'",
-      "https://fonts.googleapis.com",
-      "https://cdnjs.cloudflare.com",
-    ],
     imgSrc: [
       "'self'", // Default policy for valid sources for stylesheets: allow all content coming from origin (without subdomains).
       "'unsafe-inline'",
       "'unsafe-eval'",
+      "data: https:", "data: http:",
       "https://fonts.googleapis.com",
       "https://cdnjs.cloudflare.com",
     ],
