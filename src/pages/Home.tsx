@@ -49,7 +49,7 @@ export default function Home(props: any) {
     if (isMounted.current) {
       if (!coords.loading && coords.lat !== null && coords.lon !== null) {
         if (!areCoordsInArray(weather, coords)) {
-          setLoading({ isLoading: coords.loading });
+          setLoading({ isLoading: true });
           api
             .getCityByCoords({ lat: coords.lat, lon: coords.lon })
             .then((res: any) => {
@@ -62,7 +62,9 @@ export default function Home(props: any) {
                 .then((response: Forecast) => {
                   if (isMounted.current) {
                     updateWeather(response);
-                    handleSuccess(`${MESSAGES.INITIAL_SUCCESS} - ${response.city}`);
+                    handleSuccess(
+                      `${MESSAGES.INITIAL_SUCCESS} - ${response.city}`
+                    );
                   }
                 })
                 .catch((err: any) => {
@@ -70,9 +72,17 @@ export default function Home(props: any) {
                     handleErr(MESSAGES.GENERIC_ERROR, err);
                   }
                 })
-                .finally(() =>
-                  isMounted.current ? setLoading({ isLoading: false }) : null
-                );
+                .finally(() => {
+                  if (isMounted.current) {
+                    handleStopLoading();
+                  }
+                });
+            })
+            .catch((err: any) => {
+              if (isMounted.current) {
+                handleStopLoading();
+                handleErr(MESSAGES.GENERIC_ERROR, err);
+              }
             });
         }
       }

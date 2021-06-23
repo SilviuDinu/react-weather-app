@@ -151,13 +151,18 @@ It will return the coords (lat, lon) of the given location
 from the query string params
 */
 app.get("/api/current/city-to-coords", (req, res, next) => {
-  const { cityName, countryCode = "RO" } = req.query;
+  const { cityName, countryCode } = req.query;
+  const url = countryCode
+    ? `https://${WEATHER_API_GEOCODING}/direct?q=${cityName},${countryCode}&appid=${API_KEY}`
+    : `https://${WEATHER_API_GEOCODING}/direct?q=${cityName}&appid=${API_KEY}`;
   axios
-    .get(
-      `https://${WEATHER_API_GEOCODING}/direct?q=${cityName},${countryCode}&appid=${API_KEY}`
-    )
+    .get(url)
     .then((response) => {
-      res.json({ ...response.data[0], cityName });
+      res.json({
+        lat: response.data[0].lat,
+        lon: response.data[0].lon,
+        cityName,
+      });
     })
     .catch((error) => {
       next(error);
