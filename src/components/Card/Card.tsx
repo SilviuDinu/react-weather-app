@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Card(props: any) {
   const { currentInfo, hourlyInfo } = (props.data as Forecast) || {};
-  
+
   const classes = useStyles();
   const parseWrapperClass = (description: string): string => {
     if (!description) {
@@ -29,7 +29,6 @@ export default function Card(props: any) {
     }
     return description.split(" ").join("-");
   };
-
 
   return (
     <div

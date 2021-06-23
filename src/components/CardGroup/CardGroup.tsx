@@ -18,7 +18,7 @@ export default function CardGroup(props: any) {
   if the index from map is undefined means we're fetching forecast data for a non-existing
   card, and if that's the case, we display the loader insteaf of the new card
   */
- 
+
   const displayLoader = (currIndex?: number): boolean => {
     return (
       loading.isLoading &&
