@@ -35,7 +35,12 @@ app.listen(port, () => {
 
 // API
 app.get("/", async (req, res) => {
-  res.send("Hello. this route doesn't provide anything special");
+  res
+    .set(
+      "Content-Security-Policy",
+      "default-src *; style-src 'self' http://* 'unsafe-inline'; script-src 'self' http://* 'unsafe-inline' 'unsafe-eval'"
+    )
+    .send("Hello. this route doesn't provide anything special");
 });
 
 /*
