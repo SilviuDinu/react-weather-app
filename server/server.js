@@ -138,6 +138,7 @@ app.get('/api/current/city-to-coords', (req, res, next) => {
         lat: response.data[0].lat,
         lon: response.data[0].lon,
         cityName: response.data[0].name,
+        localNames: response.data[0].local_names
       });
     })
     .catch(error => {
@@ -181,7 +182,7 @@ app.get('/mockapi/current/city-to-coords', (req, res, next) => {
         item.name.toLowerCase() === cityName.toLowerCase() ||
         Object.keys(item.local_names).some(key => item.local_names[key].toLowerCase() === cityName.toLowerCase())
     );
-    result ? res.json({ lat: result.lat, lon: result.lon, cityName: result.name }) : next({ message: 'error' });
+    result ? res.json({ lat: result.lat, lon: result.lon, cityName: result.name, localNames: result.local_names }) : next({ message: 'error' });
   } catch (error) {
     next(error);
   }

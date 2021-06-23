@@ -10,9 +10,9 @@ export const getObjIndexFromArray = (haystack: any[], needle: any): number => {
     return haystack.indexOf(
         haystack.find(
             (hay: any) => {
-                const hayCity = hay.city;
-                const needleCity = needle.city;
-                return normalize(hayCity).toLowerCase() === normalize(needleCity).toLowerCase();
+                const hayCity = normalize(hay.city).toLowerCase();
+                const needleCity = normalize(needle.city).toLowerCase();
+                return hayCity === needleCity || hayCity.includes(needleCity);
             }
         )
     );

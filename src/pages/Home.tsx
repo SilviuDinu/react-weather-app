@@ -49,7 +49,7 @@ export default function Home(props: any) {
     if (isMounted.current) {
       if (!coords.loading && coords.lat !== null && coords.lon !== null) {
         if (!areCoordsInArray(weather, coords)) {
-          setLoading({ isLoading: true });
+          setLoading({ isLoading: true, id: 0 });
           api
             .getCityByCoords({ lat: coords.lat, lon: coords.lon })
             .then((res: any) => {
