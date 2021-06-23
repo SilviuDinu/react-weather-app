@@ -9,7 +9,11 @@ export const buildSearchParams = (params: any) => {
 export const getObjIndexFromArray = (haystack: any[], needle: any): number => {
     return haystack.indexOf(
         haystack.find(
-            (hay: any) => hay.city.toLowerCase() === needle.city.toLowerCase()
+            (hay: any) => {
+                const hayCity = hay.city;
+                const needleCity = needle.city;
+                return normalize(hayCity).toLowerCase() === normalize(needleCity).toLowerCase();
+            }
         )
     );
 }
@@ -46,8 +50,12 @@ export const isCloseEnough = (reference: any, value: any, treshold = 0.05): bool
 
 export const getLoadingId = (data: any[], value: any): number => {
     const idx = getObjIndexFromArray(data, { city: value });
-    if (!idx || idx < 0) {
+    if ((!idx && idx !== 0) || idx < 0) {
         return data.length;
     }
     return idx;
+}
+
+export const normalize = (data: string): string => {
+    return data.normalize('NFD').replace(/\p{Diacritic}/gu, "");
 }

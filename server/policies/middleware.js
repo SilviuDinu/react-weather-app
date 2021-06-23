@@ -8,11 +8,13 @@ module.exports = middleware = {
       "cdn.jsdelivr.net",
       "fonts.googleapis.com",
       "use.fontawesome.com",
+      "http://*",
     ],
     scriptSrc: [
       "'self'",
       "'unsafe-eval'",
       "'unsafe-inline'",
+      "http://*",
       "cdnjs.cloudflare.com",
     ],
     fontSrc: [

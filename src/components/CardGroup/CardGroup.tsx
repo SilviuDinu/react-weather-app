@@ -22,7 +22,7 @@ export default function CardGroup(props: any) {
   const displayLoader = (currIndex?: number): boolean => {
     return (
       loading.isLoading &&
-      !!loading.id &&
+      (loading.id === 0 || !!loading.id) &&
       (currIndex === loading.id ||
         (currIndex === undefined && loading.id === weather.length))
     );

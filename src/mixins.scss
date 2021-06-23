@@ -1,0 +1,29 @@
+@mixin animate($name, $x-pos-start, $y-pos-start, $x-pos-mid, $y-pos-mid, $x-pos-end, $y-pos-end, $time) {
+
+    animation: #{$name} $time linear infinite;
+    animation-fill-mode: forwards;
+
+    @keyframes #{$name} {
+        0% {
+          background-position: $x-pos-start $y-pos-start;
+        }
+        50% {
+          background-position: $x-pos-mid $y-pos-mid;
+        }
+        100% {
+          background-position: $x-pos-end $y-pos-end;
+        }
+      }
+   
+    @-webkit-keyframes #{$name} {
+      0% {
+          background-position: $x-pos-start $y-pos-start;
+        }
+        50% {
+          background-position: $x-pos-mid $y-pos-mid;
+        }
+        100% {
+          background-position: $x-pos-end $y-pos-end;
+      }
+    }
+}
