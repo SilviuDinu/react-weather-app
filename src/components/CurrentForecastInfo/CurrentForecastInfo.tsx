@@ -18,7 +18,7 @@ export default function CurrentForecastInfo(props: any) {
           />
           <span className="weather-card-temp current">
             {`${parseInt(data?.temperature?.value)}`}
-            {SYMBOLS.CELSIULS}
+            {SYMBOLS.CELSIUS}
           </span>
         </div>
         <span className="weather-card-description">
@@ -35,7 +35,7 @@ export default function CurrentForecastInfo(props: any) {
             alt="logo"
           /> */}
           {`Max: ${parseInt(data?.temperature?.max)}`}
-          {SYMBOLS.CELSIULS}
+          {SYMBOLS.CELSIUS}
         </span>
         <span className="weather-card-temp low">
           {/* <img
@@ -46,7 +46,7 @@ export default function CurrentForecastInfo(props: any) {
             alt="logo"
           /> */}
           {`Min: ${parseInt(data?.temperature?.min)}`}
-          {SYMBOLS.CELSIULS}
+          {SYMBOLS.CELSIUS}
         </span>
         <span className="weather-card-temp humidity">
         {/* <img

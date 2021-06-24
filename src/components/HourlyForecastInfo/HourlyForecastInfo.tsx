@@ -28,7 +28,7 @@ export default function HourlyForecastInfo(props: any) {
               </span>
               <span className="hourly-weather-temp current">
                 {`${parseInt(hour?.temperature?.value)}`}
-                {SYMBOLS.CELSIULS}
+                {SYMBOLS.CELSIUS}
               </span>
               {/* <span className="hourly-weather-temp humidity">{`Humidity: ${hour?.humidity}%`}</span> */}
             </div>

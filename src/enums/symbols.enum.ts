@@ -1,3 +1,3 @@
 export enum SYMBOLS {
-    CELSIULS = '\u00b0C'
+    CELSIUS = '\u00b0C'
 }

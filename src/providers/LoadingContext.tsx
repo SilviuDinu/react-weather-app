@@ -5,9 +5,17 @@ export const LoadingProvider = (props: any): any => {
   const [loading, setLoading] = useState<Loading>({
     isLoading: false,
   });
-
+  const [skeletonProps, setSkeletonProps] = useState<any>({
+    numRows: null,
+    numCols: null,
+    maxRowWidth: 100,
+    minRowWidth: 75,
+    rowWidth: null,
+    rowHeight: 20,
+    contentMargin: 28,
+  });
   return (
-    <LoadingContext.Provider value={[loading, setLoading]}>
+    <LoadingContext.Provider value={[loading, setLoading, skeletonProps, setSkeletonProps]}>
       {props.children}
     </LoadingContext.Provider>
   );

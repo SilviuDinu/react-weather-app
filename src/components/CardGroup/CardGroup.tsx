@@ -4,6 +4,7 @@ import { useContext } from "react";
 import { Forecast } from "@models/forecast";
 import Loader from "@components/Loader/Loader";
 import { LoadingContext } from "@providers/LoadingContext";
+import { LOADER_TYPES } from "@enums/loader-types.enum";
 
 export default function CardGroup(props: any) {
   const [weather] = useContext(WeatherContext);
@@ -32,14 +33,25 @@ export default function CardGroup(props: any) {
     <div className="card-group">
       {weather.map((item: any, index: number) =>
         displayLoader(index) ? (
-          <Loader key={index} isLoading={loading.isLoading} />
-        ) : (
+          <Loader key={index} isLoading={loading.isLoading} type={"spinner"} />
+        ) : index === 0 ? (
           <Card
             key={index}
             title={item.city}
             id={index}
             data={item as Forecast}
           ></Card>
+        ) : (
+          <Loader
+            key={index}
+            isLoading={true}
+            type={LOADER_TYPES.SKELETON}
+            numCols={3}
+            numRows={3}
+            maxRowWidth={100}
+            minRowWidth={75}
+            rowHeight={25}
+          />
         )
       )}
       {displayLoader() ? <Loader isLoading={loading.isLoading} /> : null}

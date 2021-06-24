@@ -100,8 +100,9 @@ export default function Home(props: any) {
       api
         .getCoordsByCity(searchParams.searchValue)
         .then((res: any) => {
+          const { lat, lon, cityName } = res;
           api
-            .getAllWeatherByCoords({ ...res, units: "metric" })
+            .getAllWeatherByCoords({ lat, lon, cityName, units: "metric" })
             .then((response: Forecast) => {
               if (isMounted.current) {
                 updateWeather(response);

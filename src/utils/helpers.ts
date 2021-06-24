@@ -32,6 +32,9 @@ export const exists = (pool: any[], fish: any): boolean => {
     return false;
 }
 
+export const getRandomVal = (min: number, max: number): number => {
+    return Math.random() * (max - min) + min;
+};
 export const areCoordsInArray = (arr: any[], coords: Coords): boolean => {
     const { lat, lon } = coords;
     if (!lat || !lon) {
