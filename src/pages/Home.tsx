@@ -17,6 +17,7 @@ import { LoadingContext } from "@providers/LoadingContext";
 import { MESSAGES } from "@enums/misc.enum";
 import Api from "@utils/api";
 import { Forecast } from "@models/forecast";
+import { LOADER_TYPES } from '@enums/loader-types.enum';
 
 const formData = {
   input: {
@@ -175,7 +176,7 @@ export default function Home(props: any) {
         <SearchForm form={formData} />
         {/* try to display forecast based on current location */}
         {coords.loading && !coords.error ? (
-          <Loader isLoading={coords.loading} />
+          <Loader isLoading={coords.loading} type={LOADER_TYPES.SPINNER} />
         ) : (
           <CardGroup />
         )}

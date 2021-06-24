@@ -33,15 +33,15 @@ export default function CardGroup(props: any) {
     <div className="card-group">
       {weather.map((item: any, index: number) =>
         displayLoader(index) ? (
-          <Loader key={index} isLoading={loading.isLoading} type={LOADER_TYPES.SPINNER} />
-          // <Loader
-          //   key={index} isLoading={loading.isLoading}
-          //   type={LOADER_TYPES.SKELETON}
-          //   numCols={3}
-          //   numRows={3}
-          //   rowWidth={100}
-          //   rowHeight={25}
-          // />
+          <Loader
+            key={index}
+            isLoading={loading.isLoading}
+            type={LOADER_TYPES.SKELETON}
+            numCols={3}
+            numRows={3}
+            rowWidth={100}
+            rowHeight={25}
+          />
         ) :
           <Card
             key={index}
@@ -49,16 +49,16 @@ export default function CardGroup(props: any) {
             id={index}
             data={item as Forecast}
           ></Card>
-
       )}
-      {displayLoader() ? <Loader
-        isLoading={loading.isLoading}
-        type={LOADER_TYPES.SKELETON}
-        numCols={3}
-        numRows={3}
-        rowWidth={100}
-        rowHeight={25}
-      /> : null}
+      {displayLoader() ?
+        <Loader
+          isLoading={loading.isLoading}
+          type={LOADER_TYPES.SKELETON}
+          numCols={3}
+          numRows={3}
+          rowWidth={100}
+          rowHeight={25}
+        /> : null}
     </div>
   );
 }
