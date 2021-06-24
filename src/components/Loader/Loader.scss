@@ -45,6 +45,10 @@
   overflow: hidden;
   position: relative;
 
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
   .skeleton {
     width: 100%;
     height: 100%;
@@ -61,12 +65,55 @@
         rgb(143, 142, 141) 100%
       )
       0 0 / 200% 100% #4a545e;
-    animation: linearAnim 1.25s infinite linear;
+      // background: linear-gradient(90deg, #f0f0f0, #e0e0e0, #f0f0f0) 0 0/ 100vh 100% fixed;
+
+    animation: linearAnim 1s infinite linear;
   }
 
-  #mask {
-    padding: 8px 0px 8px 8px;
-    margin: 8px;
+  .skeleton-mask {
+    padding: 0px;
+    display: flex;
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+
+    .skeleton-content {
+      position: relative;
+      display: flex;
+      padding: 8px 0px 8px;
+      width: 100%;
+      height: auto;
+      justify-content: space-between;
+
+      
+      .skeleton-block {
+        background-color: "#4a545e";
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 8px 32px 8px 32px;
+        margin-left: 8px;
+        margin-right: 8px;
+        justify-content: space-between;
+
+        .skeleton-item{
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          margin: 16px 0 16px;
+        }
+      }
+    }
+
+    .skeleton-expand {
+      padding: 12px;
+      display: inline-flex;
+      position: relative;
+    }
+
   }
 }
 

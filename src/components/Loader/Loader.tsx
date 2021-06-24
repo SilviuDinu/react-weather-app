@@ -17,24 +17,30 @@ export default function Loader(props: any) {
 
   const renderBlocks = (rows: number, cols: number): ReactElement[] => {
     let blocks = [];
+    let items = [];
     let k = 0;
     for (let i = 0; i < rows; i++) {
+      items = [];
       for (let j = 0; j < cols; j++) {
-        blocks.push(
-          <rect
+        items.push(
+          <div
             key={k}
-            x={getRowX(i, j)}
-            y={getRowY(i, j)}
-            width={maintainRowWidth ? rowWidth : getRowWidth(i, j, rowWidth)}
-            height={getRowHeight(i, j, rowHeight)}
+            className="skeleton-item"
             style={{
-              fill: "black",
-              fillOpacity: 0.5,
+              backgroundColor: "#4a545e",
+              height: rowHeight,
+              width: getRowWidth(i, j, rowWidth)
             }}
           />
         );
         k++;
       }
+      blocks.push(
+        <div
+          key={i}
+          className="skeleton-block">
+          {[...items]}
+        </div>)
     }
     return [...blocks];
   };
@@ -58,32 +64,26 @@ export default function Loader(props: any) {
     let val: number;
     if (typeof defaultVal === 'string') {
       val = parseInt(defaultVal.replace('%', ''));
-    }  else val = defaultVal;
-    return `${val - 4 * col + row}%`;
+    } else val = defaultVal;
+    return `${val - 10 * col + row}%`;
   };
 
 
-  const getRowY = ( row: number,
-    col: number): number => {
-      if (row > 0) {
-        return col * 40;
-      }
-      return col * 50;
-  }
-
-  const getRowX =( row: number,
-    col: number): number => {
-      return row * 100 + row * maxRowWidth;
-  }
-
-  
   return isLoading ? (
     <div className={`${type}-loader-wrapper`}>
       <div className={type} aria-busy="true">
         {type === LOADER_TYPES.SKELETON ? (
-          <svg id="mask" style={{ width: "100%", margin: contentMargin }}>
-            <g style={{ opacity: "0.5" }}>{renderBlocks(numRows, numCols)}</g>
-          </svg>
+          <div className="skeleton-mask">
+            <div className="skeleton-content">
+              {renderBlocks(numRows, numCols)}
+            </div>
+            <div
+              className="skeleton-expand" style={{
+                width: '100%',
+                height: 'auto'
+              }}>
+            </div>
+          </div>
         ) : null}
       </div>
     </div>
