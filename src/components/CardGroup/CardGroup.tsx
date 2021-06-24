@@ -33,7 +33,7 @@ export default function CardGroup(props: any) {
     <div className="card-group">
       {weather.map((item: any, index: number) =>
         displayLoader(index) ? (
-          <Loader key={index} isLoading={loading.isLoading} type={"spinner"} />
+          <Loader key={index} isLoading={loading.isLoading} type={LOADER_TYPES.SPINNER} />
         ) : index === 0 ? (
           <Card
             key={index}
@@ -48,8 +48,7 @@ export default function CardGroup(props: any) {
             type={LOADER_TYPES.SKELETON}
             numCols={3}
             numRows={3}
-            maxRowWidth={100}
-            minRowWidth={75}
+            rowWidth={30}
             rowHeight={25}
           />
         )

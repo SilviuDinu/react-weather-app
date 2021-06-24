@@ -1,10 +1,7 @@
 import { LOADER_TYPES } from "@enums/loader-types.enum";
-import { LoadingContext } from "@providers/LoadingContext";
-import { useContext } from "react";
 import { ReactElement } from "react";
 
 export default function Loader(props: any) {
-  const [, , skeletonProps, setSkeletonProps] = useContext(LoadingContext);
   const {
     type = LOADER_TYPES.SPINNER,
     isLoading,
@@ -14,7 +11,8 @@ export default function Loader(props: any) {
     minRowWidth = 75,
     rowWidth,
     rowHeight = 20,
-    contentMargin = 28,
+    contentMargin = 30,
+    maintainRowWidth = false
   } = props;
 
   const renderBlocks = (rows: number, cols: number): ReactElement[] => {
@@ -25,9 +23,9 @@ export default function Loader(props: any) {
         blocks.push(
           <rect
             key={k}
-            x={i * 100 + i * maxRowWidth}
-            y={j * 50}
-            width={rowWidth || getRowWidth(minRowWidth, maxRowWidth)}
+            x={getRowX(i, j)}
+            y={getRowY(i, j)}
+            width={maintainRowWidth ? rowWidth : getRowWidth(i, j, rowWidth)}
             height={getRowHeight(i, j, rowHeight)}
             style={{
               fill: "black",
@@ -41,10 +39,6 @@ export default function Loader(props: any) {
     return [...blocks];
   };
 
-  const getRowWidth = (min: number, max: number): number => {
-    return Math.random() * (max - min) + min;
-  };
-
   const getRowHeight = (
     row: number,
     col: number,
@@ -56,6 +50,33 @@ export default function Loader(props: any) {
     return defaultVal;
   };
 
+  const getRowWidth = (
+    row: number,
+    col: number,
+    defaultVal: number | string
+  ): any => {
+    let val: number;
+    if (typeof defaultVal === 'string') {
+      val = parseInt(defaultVal.replace('%', ''));
+    }  else val = defaultVal;
+    return `${val - 4 * col + row}%`;
+  };
+
+
+  const getRowY = ( row: number,
+    col: number): number => {
+      if (row > 0) {
+        return col * 40;
+      }
+      return col * 50;
+  }
+
+  const getRowX =( row: number,
+    col: number): number => {
+      return row * 100 + row * maxRowWidth;
+  }
+
+  
   return isLoading ? (
     <div className={`${type}-loader-wrapper`}>
       <div className={type} aria-busy="true">
