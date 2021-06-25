@@ -39,8 +39,6 @@ export default function Home(props: any) {
   const [coords] = useContext(CoordsContext);
   const [weather, setWeather] = useContext(WeatherContext);
 
-  console.log('re-render Home')
-
   useEffect(() => {
     return () => {
       isMounted.current = false;
