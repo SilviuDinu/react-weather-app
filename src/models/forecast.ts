@@ -29,6 +29,7 @@ export class ForecastInfo {
         public rain?: any,
         public uvIndex?: number,
         public dewPoint?: number,
+        public ppChance?: number
     ) { }
 }
 

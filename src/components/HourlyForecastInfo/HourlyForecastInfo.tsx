@@ -18,17 +18,27 @@ export default function HourlyForecastInfo(props: any) {
             <div key={idx} className="hourly-weather-temp-item">
               <img
                 className="weather-card-icon"
-                src={`http://${MISC.IMAGES_URI}${hour?.weather?.icon}.png`}
+                src={require(`@media/images/forecast/icons/${hour?.weather?.icon}.png`).default}
                 alt={hour?.temperature.value}
-                width="50"
-                height="50"
+                width="65"
+                height="65"
               />
               <span className="hourly-weather-temp hour">
                 {hour?.timeOfRequest.format("HH:mm")}
               </span>
+              <span className="hourly-weather-temp pp-chance">
+                <img
+                  src={require(`@media/images/temperature/humidity.svg`).default}
+                  className="temp-hot"
+                  width="25"
+                  height="auto"
+                  alt="logo"
+                />
+                {`${(hour as any)?.ppChance * 100}%`}
+              </span>
               <span className="hourly-weather-temp current">
                 {`${parseInt(hour?.temperature?.value)}`}
-                {SYMBOLS.CELSIULS}
+                {SYMBOLS.CELSIUS}
               </span>
               {/* <span className="hourly-weather-temp humidity">{`Humidity: ${hour?.humidity}%`}</span> */}
             </div>
