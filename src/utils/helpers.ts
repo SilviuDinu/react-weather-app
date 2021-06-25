@@ -9,7 +9,11 @@ export const buildSearchParams = (params: any) => {
 export const getObjIndexFromArray = (haystack: any[], needle: any): number => {
     return haystack.indexOf(
         haystack.find(
-            (hay: any) => hay.city.toLowerCase() === needle.city.toLowerCase()
+            (hay: any) => {
+                const hayCity = normalize(hay.city).toLowerCase();
+                const needleCity = normalize(needle.city).toLowerCase();
+                return hayCity === needleCity || hayCity.includes(needleCity);
+            }
         )
     );
 }
@@ -28,6 +32,9 @@ export const exists = (pool: any[], fish: any): boolean => {
     return false;
 }
 
+export const getRandomVal = (min: number, max: number): number => {
+    return Math.random() * (max - min) + min;
+};
 export const areCoordsInArray = (arr: any[], coords: Coords): boolean => {
     const { lat, lon } = coords;
     if (!lat || !lon) {
@@ -42,4 +49,16 @@ export const areCoordsInArray = (arr: any[], coords: Coords): boolean => {
 
 export const isCloseEnough = (reference: any, value: any, treshold = 0.05): boolean => {
     return Math.abs(parseFloat(reference.toFixed(3))) - value < treshold;
+}
+
+export const getLoadingId = (data: any[], value: any): number => {
+    const idx = getObjIndexFromArray(data, { city: value });
+    if ((!idx && idx !== 0) || idx < 0) {
+        return data.length;
+    }
+    return idx;
+}
+
+export const normalize = (data: string): string => {
+    return data.normalize('NFD').replace(/\p{Diacritic}/gu, "");
 }

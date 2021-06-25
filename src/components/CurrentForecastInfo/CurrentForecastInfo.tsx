@@ -1,8 +1,6 @@
 import { MISC } from "@enums/misc.enum";
 import { SYMBOLS } from "@enums/symbols.enum";
 import { capitalize } from "lodash";
-import moment from "moment";
-import hot from "@media/images/temperature/hot.svg";
 
 export default function CurrentForecastInfo(props: any) {
   const { data } = props;
@@ -13,14 +11,14 @@ export default function CurrentForecastInfo(props: any) {
         <div className="weather-card-icon-wrapper">
           <img
             className="weather-card-icon"
-            src={`http://${MISC.IMAGES_URI}${data?.weather?.icon}.png`}
+            src={require(`@media/images/forecast/icons/${data?.weather?.icon}.png`).default}
             alt={data?.temperature.value}
-            width="50"
-            height="50"
+            width="65"
+            height="65"
           />
           <span className="weather-card-temp current">
             {`${parseInt(data?.temperature?.value)}`}
-            {SYMBOLS.CELSIULS}
+            {SYMBOLS.CELSIUS}
           </span>
         </div>
         <span className="weather-card-description">
@@ -37,7 +35,7 @@ export default function CurrentForecastInfo(props: any) {
             alt="logo"
           /> */}
           {`Max: ${parseInt(data?.temperature?.max)}`}
-          {SYMBOLS.CELSIULS}
+          {SYMBOLS.CELSIUS}
         </span>
         <span className="weather-card-temp low">
           {/* <img
@@ -48,7 +46,7 @@ export default function CurrentForecastInfo(props: any) {
             alt="logo"
           /> */}
           {`Min: ${parseInt(data?.temperature?.min)}`}
-          {SYMBOLS.CELSIULS}
+          {SYMBOLS.CELSIUS}
         </span>
         <span className="weather-card-temp humidity">
         {/* <img

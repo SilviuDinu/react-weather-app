@@ -12,7 +12,7 @@ const useStyles = makeStyles({
 
 export default function Footer() {
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+  const [value] = React.useState(0);
 
   return (
     <footer className="footer">

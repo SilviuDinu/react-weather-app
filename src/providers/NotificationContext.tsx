@@ -3,6 +3,7 @@ import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { createContext, useState } from "react";
 import { Notification as NotificationModel } from "@models/notification";
+import { useEffect } from 'react';
 
 const val = {
   severity: "info",
@@ -26,6 +27,18 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const NotificationProvider = (props: any) => {
   const classes = useStyles();
   const [notification, setNotification] = useState<NotificationModel>(val);
+
+  useEffect(() => {
+    let promise: any;
+    if (notification.isVisible) {
+      promise = setTimeout(() => handleClose(), 4000);
+    }
+    return () => {
+      if (promise) {
+        clearTimeout(promise);
+      }
+    }
+  }, [notification.isVisible])
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     setNotification({ ...notification, isVisible: false });

@@ -12,6 +12,10 @@
 # production
 /build
 
+
+# /src/media/images/forecast
+/src/media/images/forecast/backup
+
 # misc
 .DS_Store
 .env.local

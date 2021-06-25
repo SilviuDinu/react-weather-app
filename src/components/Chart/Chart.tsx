@@ -1,4 +1,4 @@
-import { Sparklines, SparklinesLine, SparklinesText } from "react-sparklines";
+import { Sparklines, SparklinesLine } from "react-sparklines";
 
 export default function Chart(props: any) {
   const { data, min = 0 } = props;

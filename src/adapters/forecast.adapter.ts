@@ -1,6 +1,6 @@
 import { FORECAST_TYPES, TEMP_TYPE } from "@enums/forecast-types.enum";
 import { Adapter } from "@models/adapter";
-import { FeelsLike, Forecast, ForecastInfo, TemperatureInfo, WeatherInfo, WindInfo } from "@models/forecast";
+import { Forecast, ForecastInfo, TemperatureInfo, WeatherInfo, WindInfo } from "@models/forecast";
 import moment from "moment";
 
 export class ForecastAdapter implements Adapter<Forecast[]> {
@@ -91,6 +91,7 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
                         this.getRainInfo(item.rain),
                         item.uvi,
                         item.dew_point,
+                        item.pop
                     )
                 }) : [];
     }
@@ -109,9 +110,11 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
             ? hourly
                 .filter((hour: any, idx: number) => {
                     const hourTime = moment.unix(hour.dt);
-                    return hourTime.diff(currentInfoTime, 'days') < 1
-                        && hourTime.diff(currentInfoTime, 'hours') > 0
-                        && hourTime.diff(currentInfoTime, 'hours') < 6
+                    const diffHours = hourTime.diff(currentInfoTime, 'hours');
+                    const diffDays = hourTime.diff(currentInfoTime, 'days');
+                    return diffDays < 1
+                        && diffHours > 0
+                        && diffHours < 6
 
                 })
                 .map((item: any) => {
@@ -130,6 +133,7 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
                         this.getRainInfo(item.rain),
                         item.uvi,
                         item.dew_point,
+                        item.pop
                     )
                 }) : [];
     }

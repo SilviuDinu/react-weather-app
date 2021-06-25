@@ -20,18 +20,18 @@ const BASE_URL = process.env.WEATHER_API_BASE_URL;
 const WEATHER_API_GEOCODING = process.env.WEATHER_API_GEOCODING;
 
 const app = express();
-const port = process.env.PORT || 3001;
-app.use(express.static(path.join("../build")));
-
-app.listen(port, () => {
-  console.log("Running on port " + port);
-});
 app.enable("trust proxy");
 app.use(helmet());
 app.use(helmet.contentSecurityPolicy(middleware));
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
+const port = process.env.PORT || 3001;
+app.use(express.static(path.join("../build")));
+
+app.listen(port, () => {
+  console.log("Running on port " + port);
+});
 
 // API
 app.get("/", async (req, res) => {
@@ -146,13 +146,19 @@ It will return the coords (lat, lon) of the given location
 from the query string params
 */
 app.get("/api/current/city-to-coords", (req, res, next) => {
-  const { cityName, countryCode = "RO" } = req.query;
+  const { cityName, countryCode } = req.query;
+  const url = countryCode
+    ? `https://${WEATHER_API_GEOCODING}/direct?q=${cityName},${countryCode}&appid=${API_KEY}`
+    : `https://${WEATHER_API_GEOCODING}/direct?q=${cityName}&appid=${API_KEY}`;
   axios
-    .get(
-      `https://${WEATHER_API_GEOCODING}/direct?q=${cityName},${countryCode}&appid=${API_KEY}`
-    )
+    .get(url)
     .then((response) => {
-      res.json({ ...response.data[0], cityName });
+      res.json({
+        lat: response.data[0].lat,
+        lon: response.data[0].lon,
+        cityName: response.data[0].name,
+        localNames: response.data[0].local_names,
+      });
     })
     .catch((error) => {
       next(error);
@@ -194,9 +200,21 @@ app.get("/mockapi/current/coords-to-city", (req, res, next) => {
 app.get("/mockapi/current/city-to-coords", (req, res, next) => {
   const { cityName } = req.query;
   try {
-    const result = coordsByCity.find((item) => item.name.toLowerCase() === cityName.toLowerCase());
+    const result = coordsByCity.find(
+      (item) =>
+        item.name.toLowerCase() === cityName.toLowerCase() ||
+        Object.keys(item.local_names).some(
+          (key) =>
+            item.local_names[key].toLowerCase() === cityName.toLowerCase()
+        )
+    );
     result
-      ? res.json({ lat: result.lat, lon: result.lon, cityName })
+      ? res.json({
+          lat: result.lat,
+          lon: result.lon,
+          cityName: result.name,
+          localNames: result.local_names,
+        })
       : next({ message: "error" });
   } catch (error) {
     next(error);

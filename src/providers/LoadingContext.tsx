@@ -1,7 +1,10 @@
+import { Loading } from "@models/loading";
 import { createContext, useState } from "react";
 
 export const LoadingProvider = (props: any): any => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<Loading>({
+    isLoading: false,
+  });
 
   return (
     <LoadingContext.Provider value={[loading, setLoading]}>
@@ -9,4 +12,7 @@ export const LoadingProvider = (props: any): any => {
     </LoadingContext.Provider>
   );
 };
-export const LoadingContext = createContext<any>(false);
+
+export const LoadingContext = createContext<any>({
+  isLoading: false,
+});
