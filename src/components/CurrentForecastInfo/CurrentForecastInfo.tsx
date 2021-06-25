@@ -11,10 +11,10 @@ export default function CurrentForecastInfo(props: any) {
         <div className="weather-card-icon-wrapper">
           <img
             className="weather-card-icon"
-            src={`http://${MISC.IMAGES_URI}${data?.weather?.icon}.png`}
+            src={require(`@media/images/forecast/icons/${data?.weather?.icon}.png`).default}
             alt={data?.temperature.value}
-            width="50"
-            height="50"
+            width="65"
+            height="65"
           />
           <span className="weather-card-temp current">
             {`${parseInt(data?.temperature?.value)}`}

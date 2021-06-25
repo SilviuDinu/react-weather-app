@@ -91,6 +91,7 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
                         this.getRainInfo(item.rain),
                         item.uvi,
                         item.dew_point,
+                        item.pop
                     )
                 }) : [];
     }
@@ -132,6 +133,7 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
                         this.getRainInfo(item.rain),
                         item.uvi,
                         item.dew_point,
+                        item.pop
                     )
                 }) : [];
     }

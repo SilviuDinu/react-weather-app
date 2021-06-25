@@ -213,9 +213,10 @@
         flex-direction: row;
         align-items: center;
         vertical-align: middle;
+        justify-content: space-evenly;
 
         .weather-card-icon {
-          width: 60px;
+          width: 65px;
           height: auto;
         }
       }
