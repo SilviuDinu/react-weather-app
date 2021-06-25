@@ -25,9 +25,9 @@ function App() {
                   <Switch>
                     {/* @ts-ignore */}
                     <Route exact path="/">
-                      {/* <SearchParamsProvider> */}
+                      <SearchParamsProvider>
                         <Home />
-                      {/* </SearchParamsProvider> */}
+                      </SearchParamsProvider>
                     </Route>
                     {/* @ts-ignore */}
                     <Route exact path="/about">

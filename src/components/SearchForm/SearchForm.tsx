@@ -2,30 +2,12 @@ import Button from "@components/Button/Button";
 import { MESSAGES } from '@enums/misc.enum';
 import { NotificationContext } from '@providers/NotificationContext';
 import { SearchParamsContext } from "@providers/SearchParamsContext";
-import { useEffect } from 'react';
-import { useState } from 'react';
 import { ChangeEvent, useContext } from "react";
 
 export default function SearchForm(props: any) {
   const { form } = props;
-  const [searchParams, setSearchParams] = useState({
-    searchValue: "",
-    lat: null,
-    lon: null,
-    submitted: false,
-  });
+  const [searchParams, setSearchParams] = useContext(SearchParamsContext);
   const [, setNotification] = useContext(NotificationContext);
-
-  useEffect(() => {
-    if (searchParams.submitted) {
-      props.onFormSubmit(searchParams);
-    }
-    return () => setSearchParams({
-      ...searchParams,
-      searchValue: '',
-      submitted: false
-    })
-  }, [searchParams.submitted]);
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const val = e.target.value || "";
@@ -42,7 +24,7 @@ export default function SearchForm(props: any) {
     }
     if (!searchParams.searchValue) {
       setNotification({
-        severity: "warning",
+        severity: "error",
         message: MESSAGES.EMPTY_FIELD_ERROR,
         isVisible: true,
       });
@@ -52,6 +34,7 @@ export default function SearchForm(props: any) {
       ...searchParams,
       submitted: true,
     });
+    
   };
 
   return (
@@ -64,7 +47,7 @@ export default function SearchForm(props: any) {
         placeholder={form.input.placeholder}
         aria-label={form.input.ariaLabel}
         value={searchParams.searchValue}
-        onChange={onInputChange}
+        onChange={(event) => onInputChange(event)}
       />
       <Button
         type="primary"
