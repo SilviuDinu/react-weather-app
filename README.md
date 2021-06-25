@@ -2,9 +2,9 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Live Demo
 
-[https://weather-app-react-slv.herokuapp.com/](Live-Demo-here)
+[https://weather-app-react-slv.herokuapp.com/]
 
 ## Available Scripts
 
