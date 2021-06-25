@@ -1,7 +1,9 @@
 const path = require("path");
 const express = require("express");
+const mongoose = require("mongoose");
 const morgan = require("morgan");
 const helmet = require("helmet");
+const yup = require("yup");
 const cors = require("cors");
 const csp = require("helmet-csp");
 const middleware = require("./policies/middleware");
@@ -11,7 +13,14 @@ const { default: axios } = require("axios");
 const coordsByCity = require("./mocks/coords-by-city");
 const cityByCoords = require("./mocks/city-by-coords-google");
 const cityByCoordsOpenweather = require("./mocks/city-by-coords-openweather");
+const { schema } = require("./schemas/location");
 require("dotenv").config();
+
+mongoose.connect(process.env.MONGODB_URI, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+});
+const locations = mongoose.connection.collection("locations");
 
 const API_KEY = process.env.API_KEY;
 const MAPS_API_KEY = process.env.MAPS_API_KEY;
@@ -132,6 +141,11 @@ app.get("/api/current/coords-to-city", (req, res, next) => {
               res.json(
                 response.data.results[0].address_components[2].long_name
               );
+              updateDB({
+                city: response.data.results[0].address_components[2].long_name,
+                lat: response.data.results[0].geometry.location.lat,
+                lon: response.data.results[0].geometry.location.lon,
+              });
             })
             .catch((error) => {
               next(error);
@@ -153,11 +167,22 @@ app.get("/api/current/city-to-coords", (req, res, next) => {
   axios
     .get(url)
     .then((response) => {
+      const data = {
+        lat: response.data[0].lat,
+        lon: response.data[0].lon,
+        cityName: response.data[0].name,
+        localNames: response.data[0].local_names,
+      };
       res.json({
         lat: response.data[0].lat,
         lon: response.data[0].lon,
         cityName: response.data[0].name,
         localNames: response.data[0].local_names,
+      });
+      updateDB({
+        city: response.data[0].name,
+        lat: response.data[0].lat,
+        lon: response.data[0].lon,
       });
     })
     .catch((error) => {
@@ -188,10 +213,15 @@ app.get("/mockapi/current/coords-to-city", (req, res, next) => {
   try {
     const result = cityByCoordsOpenweather.find(
       (item) =>
-        Math.abs(parseFloat(item.lat, 3) - parseFloat(lat, 3)) < 0.05 &&
-        Math.abs(parseFloat(item.lon, 3) - parseFloat(lon, 3)) < 0.05
+        Math.abs(parseFloat(item.lat, 3) - parseFloat(lat, 3)) < 0.1 &&
+        Math.abs(parseFloat(item.lon, 3) - parseFloat(lon, 3)) < 0.1
     );
-    result ? res.json(result) : next({ message: "error" });
+    if (result) {
+      res.json(result);
+      updateDB({ city: result.name, lat: result.lat, lon: result.lon });
+    } else {
+      next({ message: "error" });
+    }
   } catch (error) {
     next(error);
   }
@@ -208,6 +238,12 @@ app.get("/mockapi/current/city-to-coords", (req, res, next) => {
             item.local_names[key].toLowerCase() === cityName.toLowerCase()
         )
     );
+    const data = {
+      lat: result.lat,
+      lon: result.lon,
+      cityName: result.name,
+      localNames: result.local_names,
+    };
     result
       ? res.json({
           lat: result.lat,
@@ -216,6 +252,11 @@ app.get("/mockapi/current/city-to-coords", (req, res, next) => {
           localNames: result.local_names,
         })
       : next({ message: "error" });
+    updateDB({
+      lat: result.lat,
+      lon: result.lon,
+      city: result.name,
+    });
   } catch (error) {
     next(error);
   }
@@ -256,6 +297,25 @@ app.get("/mockapi/one/coords", (req, res, next) => {
   // );
   // result ? res.json({...onecall[0], cityName}) : next({ message: 'error' });
 });
+
+const updateDB = async (data) => {
+  try {
+    schema
+      .validate({ ...data })
+      .then(async () => {
+        const done = await locations.update(
+          { city: data.city },
+          { ...data },
+          {
+            upsert: true,
+          }
+        );
+      })
+      .catch((err) => console.log(err));
+  } catch (err) {
+    next(err);
+  }
+};
 
 app.use((error, req, res, next) => {
   if (error.status) {
