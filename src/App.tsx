@@ -6,7 +6,6 @@ import About from "@pages/About";
 import Body from "@components/Body/Body";
 import Footer from "@components/Footer/Footer";
 import Page404 from "@pages/Page404";
-import { SearchParamsProvider } from "@providers/SearchParamsContext";
 import { WeatherProvider } from "@providers/WeatherContext";
 import { CoordsProvider } from "@providers/CoordsContext";
 import { LoadingProvider } from "@providers/LoadingContext";
@@ -25,9 +24,7 @@ function App() {
                   <Switch>
                     {/* @ts-ignore */}
                     <Route exact path="/">
-                      {/* <SearchParamsProvider> */}
-                        <Home />
-                      {/* </SearchParamsProvider> */}
+                      <Home />
                     </Route>
                     {/* @ts-ignore */}
                     <Route exact path="/about">

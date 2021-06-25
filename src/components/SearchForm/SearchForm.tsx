@@ -1,7 +1,6 @@
 import Button from "@components/Button/Button";
 import { MESSAGES } from '@enums/misc.enum';
 import { NotificationContext } from '@providers/NotificationContext';
-import { SearchParamsContext } from "@providers/SearchParamsContext";
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { ChangeEvent, useContext } from "react";

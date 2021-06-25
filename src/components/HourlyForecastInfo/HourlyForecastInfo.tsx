@@ -28,7 +28,7 @@ export default function HourlyForecastInfo(props: any) {
               </span>
               <span className="hourly-weather-temp pp-chance">
                 <img
-                  src={require(`@media/images/temperature/humidity.svg`).default}
+                  src={require(`@media/images/temperature/drop.svg`).default}
                   className="temp-hot"
                   width="25"
                   height="auto"

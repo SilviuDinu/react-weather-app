@@ -2,7 +2,6 @@ import { HOME_MESSAGES } from "@enums/home.enum";
 import SearchForm from "@components/SearchForm/SearchForm";
 import Loader from "@components/Loader/Loader";
 import CardGroup from "@components/CardGroup/CardGroup";
-import { SearchParamsContext } from "@providers/SearchParamsContext";
 import { WeatherContext } from "@providers/WeatherContext";
 import {
   areCoordsInArray,
