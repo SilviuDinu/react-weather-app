@@ -16,6 +16,13 @@
 
         .hourly-weather-temp {
           margin-top: 8px;
+
+          &.pp-chance {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            vertical-align: middle;
+          }
         }
 
         .hourly-weather-temp-item {
