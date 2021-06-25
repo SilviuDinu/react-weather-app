@@ -4,7 +4,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
-[https://weather-app-react-slv.herokuapp.com/](Live Demo here)
+[https://weather-app-react-slv.herokuapp.com/](Live-Demo-here)
 
 ## Available Scripts
 
