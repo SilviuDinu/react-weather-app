@@ -14,6 +14,7 @@ const coordsByCity = require("./mocks/coords-by-city");
 const cityByCoordsOpenweather = require("./mocks/city-by-coords-openweather");
 const { schema } = require("./schemas/location");
 const { normalize } = require("./helpers/helpers");
+const ipLocation = require("./mocks/ip-location");
 require("dotenv").config();
 
 mongoose.connect(process.env.MONGODB_URI, {
@@ -27,6 +28,8 @@ const MAPS_API_KEY = process.env.MAPS_API_KEY;
 const MAPS_BASE_URL = process.env.MAPS_API_BASE_URL;
 const BASE_URL = process.env.WEATHER_API_BASE_URL;
 const WEATHER_API_GEOCODING = process.env.WEATHER_API_GEOCODING;
+const GEOLOCATION_API_URL = process.env.GEOLOCATION_API_URL;
+const GEOLOCATION_API_KEY = process.env.GEOLOCATION_API_KEY;
 
 const app = express();
 app.enable("trust proxy");
@@ -154,6 +157,31 @@ app.get("/api/current/coords-to-city", (req, res, next) => {
     });
 });
 
+app.get("/api/current/location", (req, res, next) => {
+  axios
+    .get(`https://${GEOLOCATION_API_URL}/?api_key=${GEOLOCATION_API_KEY}`)
+    .then((response) => {
+      res.json({
+        ip: response.data.ip_address,
+        city: response.data.city,
+        cityId: response.data.city_geoname_id,
+        region: response.data.region,
+        regionCode: response.data.region_iso_code,
+        country: response.data.country,
+        countryCode: response.data.country_code,
+        continent: response.data.continent,
+        continentCode: response.data.continent_code,
+        lat: response.data.latitude,
+        lon: response.data.longitude,
+        time: response.data.current_time,
+        isVpn: response.data.security.is_vpn,
+      });
+    })
+    .catch((error) => {
+      next(error);
+    });
+});
+
 /*
 This will do the opposite of the above endpoint.
 It will return the coords (lat, lon) of the given location
@@ -168,7 +196,6 @@ app.get("/api/current/city-to-coords", (req, res, next) => {
     : encodeURI(
         `https://${WEATHER_API_GEOCODING}/direct?q=${cityName}&appid=${API_KEY}`
       );
-      console.log(url)
   axios
     .get(url)
     .then((response) => {
@@ -229,6 +256,28 @@ app.get("/mockapi/current/coords-to-city", (req, res, next) => {
     }
   } catch (error) {
     next(error);
+  }
+});
+
+app.get("/mockapi/current/location", (req, res, next) => {
+  try {
+    res.json({
+      ip: ipLocation.ip_address,
+      city: ipLocation.city,
+      cityId: ipLocation.city_geoname_id,
+      region: ipLocation.region,
+      regionCode: ipLocation.region_iso_code,
+      country: ipLocation.country,
+      countryCode: ipLocation.country_code,
+      continent: ipLocation.continent,
+      continentCode: ipLocation.continent_code,
+      lat: ipLocation.latitude,
+      lon: ipLocation.longitude,
+      time: ipLocation.current_time,
+      isVpn: ipLocation.security.is_vpn,
+    });
+  } catch (error) {
+    next({ message: error });
   }
 });
 
@@ -309,7 +358,7 @@ const updateDB = async (data) => {
       .validate({ ...data })
       .then(async () => {
         const done = await locations.update(
-          { city: data.city },
+          { city: normalize(data.city) },
           { ...data },
           {
             upsert: true,

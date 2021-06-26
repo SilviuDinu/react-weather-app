@@ -4,6 +4,7 @@ export enum REAL_ENDPOINTS {
     GET_WEATHER_BY_COORDS = '/api/current/coords',
     GET_ONE_CALL_BY_COORDS = '/api/one/coords',
     GET_COORDS_BY_CITY = '/api/current/city-to-coords',
+    GET_COORDS_BY_IP = '/api/current/location',
 }
 
 export enum MOCK_ENDPOINTS {
@@ -13,6 +14,7 @@ export enum MOCK_ENDPOINTS {
     GET_COORDS_BY_CITY = '/mockapi/current/city-to-coords',
     GET_WEATHER_BY_COORDS = '/mockapi/current/coords',
     GET_ONE_CALL_BY_COORDS = '/mockapi/one/coords',
+    GET_COORDS_BY_IP = '/mockapi/current/location',
 }
 
 export const ENDPOINTS = process.env.NODE_ENV === 'production'

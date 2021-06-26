@@ -74,8 +74,23 @@ export default class Api {
             })
     };
 
+    getLocationByIP = async (): Promise<any> => {
+        const promise = fetch(ENDPOINTS.GET_COORDS_BY_IP, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        return promise
+            .then((response: any) => {
+                return response.json().then((json: any) => {
+                    return response.ok ?
+                        json :
+                        Promise.reject(json);
+                })
+            })
+    };
+
     getCoordsByCity = async (cityName: string): Promise<any> => {
-        const query = cityName ? `?cityName=${cityName}` : '';
+        const query = cityName ? encodeURI(`?cityName=${cityName}`) : '';
         const promise = fetch(ENDPOINTS.GET_COORDS_BY_CITY + query, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
