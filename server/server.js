@@ -11,9 +11,9 @@ const current_weather = require("./mocks/current-weather");
 const onecall = require("./mocks/one-call");
 const { default: axios } = require("axios");
 const coordsByCity = require("./mocks/coords-by-city");
-const cityByCoords = require("./mocks/city-by-coords-google");
 const cityByCoordsOpenweather = require("./mocks/city-by-coords-openweather");
 const { schema } = require("./schemas/location");
+const { normalize } = require("./helpers/helpers");
 require("dotenv").config();
 
 mongoose.connect(process.env.MONGODB_URI, {
@@ -162,8 +162,13 @@ from the query string params
 app.get("/api/current/city-to-coords", (req, res, next) => {
   const { cityName, countryCode } = req.query;
   const url = countryCode
-    ? `https://${WEATHER_API_GEOCODING}/direct?q=${cityName},${countryCode}&appid=${API_KEY}`
-    : `https://${WEATHER_API_GEOCODING}/direct?q=${cityName}&appid=${API_KEY}`;
+    ? encodeURI(
+        `https://${WEATHER_API_GEOCODING}/direct?q=${cityName},${countryCode}&appid=${API_KEY}`
+      )
+    : encodeURI(
+        `https://${WEATHER_API_GEOCODING}/direct?q=${cityName}&appid=${API_KEY}`
+      );
+      console.log(url)
   axios
     .get(url)
     .then((response) => {
