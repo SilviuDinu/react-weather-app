@@ -31,6 +31,46 @@
       line-height: 1.5;
     }
 
+    
+    .audio-wrapper {
+      width: 100%;
+      height: auto;
+      margin-top: 72px;
+      display: flex;
+      flex-direction: column;
+      justify-self: center;
+      align-self: center;
+      align-content: center;
+      justify-content: center;
+      align-items: center;
+      vertical-align: middle;
+
+      .audio-file {
+        width: 200px;
+        overflow: auto;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        input {
+          text-align: center;
+          width: 100%;
+          height: auto;
+        }
+      }
+
+        .audio {
+          width: 100%;
+          height: auto;
+          display: flex;
+          margin-top: 32px;
+          align-content: center;
+          justify-content: center;
+          align-items: center;
+        }
+    }
+
     .home-page {
       .home-page-content {
         display: flex;
