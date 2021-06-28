@@ -3,7 +3,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const helmet = require("helmet");
-const yup = require("yup");
 const cors = require("cors");
 const csp = require("helmet-csp");
 const middleware = require("./policies/middleware");
@@ -13,7 +12,7 @@ const { default: axios } = require("axios");
 const coordsByCity = require("./mocks/coords-by-city");
 const cityByCoordsOpenweather = require("./mocks/city-by-coords-openweather");
 const { schema } = require("./schemas/location");
-const { normalize } = require("./helpers/helpers");
+const { normalize, capitalize } = require("./helpers/helpers");
 const ipLocation = require("./mocks/ip-location");
 require("dotenv").config();
 
@@ -145,9 +144,21 @@ app.get("/api/current/coords-to-city", (req, res, next) => {
                 response.data.results[0].address_components[2].long_name
               );
               updateDB({
+                normalizedCity: normalize(
+                  capitalize(
+                    response.data.results[0].address_components[2].long_name
+                  )
+                ),
                 city: response.data.results[0].address_components[2].long_name,
                 lat: response.data.results[0].geometry.location.lat,
                 lon: response.data.results[0].geometry.location.lon,
+                geometry: {
+                  type: "Point",
+                  coordinates: [
+                    parseFloat(response.data.results[0].geometry.location.lon),
+                    parseFloat(response.data.results[0].geometry.location.lat),
+                  ],
+                },
               });
             })
             .catch((error) => {
@@ -212,9 +223,17 @@ app.get("/api/current/city-to-coords", (req, res, next) => {
         localNames: response.data[0].local_names,
       });
       updateDB({
+        normalizedCity: normalize(capitalize(response.data[0].name)),
         city: response.data[0].name,
         lat: response.data[0].lat,
         lon: response.data[0].lon,
+        geometry: {
+          type: "Point",
+          coordinates: [
+            parseFloat(response.data[0].lon),
+            parseFloat(response.data[0].lat),
+          ],
+        },
       });
     })
     .catch((error) => {
@@ -231,7 +250,7 @@ app.get("/mockapi/current/all", (req, res, next) => {
   }
 });
 
-app.get("/mockapi/current/city", (req, res, next) => {
+app.get("/mockapi/current/city", async (req, res, next) => {
   const { cityName } = req.query;
   const result = current_weather.find(
     (item) => item.name.toLowerCase() === cityName.toLowerCase()
@@ -239,18 +258,48 @@ app.get("/mockapi/current/city", (req, res, next) => {
   result ? res.json(result) : next({ message: "error" });
 });
 
-app.get("/mockapi/current/coords-to-city", (req, res, next) => {
+app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
   const { lat, lon } = req.query;
   const latlng = [lat, lon].join(",");
+  let result;
   try {
-    const result = cityByCoordsOpenweather.find(
-      (item) =>
-        Math.abs(parseFloat(item.lat, 3) - parseFloat(lat, 3)) < 0.1 &&
-        Math.abs(parseFloat(item.lon, 3) - parseFloat(lon, 3)) < 0.1
-    );
+    locations.ensureIndex({ geometry: "2dsphere" });
+    const found = await locations.findOne({
+      geometry: {
+        $near: {
+          $geometry: {
+            coordinates: [parseFloat(lon), parseFloat(lat)],
+            type: "Point",
+          },
+          $maxDistance: 5000,
+        },
+      },
+    });
+    if (!found) {
+      result = cityByCoordsOpenweather.find(
+        (item) =>
+          Math.abs(parseFloat(item.lat, 3) - parseFloat(lat, 3)) < 0.1 &&
+          Math.abs(parseFloat(item.lon, 3) - parseFloat(lon, 3)) < 0.1
+      );
+    } else {
+      result = cityByCoordsOpenweather.find(
+        (item) =>
+          Math.abs(parseFloat(item.lat, 3) - parseFloat(found.lat, 3)) < 0.1 &&
+          Math.abs(parseFloat(item.lon, 3) - parseFloat(found.lon, 3)) < 0.1
+      );
+    }
     if (result) {
       res.json(result);
-      updateDB({ city: result.name, lat: result.lat, lon: result.lon });
+      updateDB({
+        normalizedCity: normalize(capitalize(result.name)),
+        city: result.name,
+        lat: result.lat,
+        lon: result.lon,
+        geometry: {
+          type: "Point",
+          coordinates: [parseFloat(lon), parseFloat(lat)],
+        },
+      });
     } else {
       next({ message: "error" });
     }
@@ -281,35 +330,46 @@ app.get("/mockapi/current/location", (req, res, next) => {
   }
 });
 
-app.get("/mockapi/current/city-to-coords", (req, res, next) => {
+app.get("/mockapi/current/city-to-coords", async (req, res, next) => {
   const { cityName } = req.query;
+  const normalizedCity = normalize(capitalize(cityName));
+  let data;
   try {
-    const result = coordsByCity.find(
-      (item) =>
-        item.name.toLowerCase() === cityName.toLowerCase() ||
-        Object.keys(item.local_names).some(
-          (key) =>
-            item.local_names[key].toLowerCase() === cityName.toLowerCase()
-        )
-    );
-    const data = {
-      lat: result.lat,
-      lon: result.lon,
-      cityName: result.name,
-      localNames: result.local_names,
-    };
-    result
-      ? res.json({
-          lat: result.lat,
-          lon: result.lon,
-          cityName: result.name,
-          localNames: result.local_names,
-        })
-      : next({ message: "error" });
+    const found = await locations.findOne({ normalizedCity });
+    if (!found) {
+      const result = coordsByCity.find(
+        (item) =>
+          item.name.toLowerCase() === cityName.toLowerCase() ||
+          Object.keys(item.local_names).some(
+            (key) =>
+              item.local_names[key].toLowerCase() === cityName.toLowerCase()
+          )
+      );
+      data = {
+        lat: result.lat,
+        lon: result.lon,
+        cityName: result.name,
+        localNames: result.local_names,
+      };
+    } else {
+      data = {
+        lat: found.lat,
+        lon: found.lon,
+        cityName: found.city,
+        localNames: {},
+      };
+    }
+
+    data ? res.json(data) : next({ message: "error" });
     updateDB({
-      lat: result.lat,
-      lon: result.lon,
-      city: result.name,
+      normalizedCity,
+      lat: data.lat,
+      lon: data.lon,
+      city: data.cityName,
+      geometry: {
+        type: "Point",
+        coordinates: [parseFloat(data.lon), parseFloat(data.lat)],
+      },
     });
   } catch (error) {
     next(error);
@@ -346,10 +406,6 @@ app.get("/mockapi/one/coords", (req, res, next) => {
   } catch (err) {
     next(err);
   }
-  // const result = onecall.find(
-  //   item => Math.abs(parseFloat(item.lat, 3) - parseFloat(lat, 3)) < 0.05 && Math.abs(parseFloat(item.lon, 3) - parseFloat(lon, 3)) < 0.05
-  // );
-  // result ? res.json({...onecall[0], cityName}) : next({ message: 'error' });
 });
 
 const updateDB = async (data) => {
@@ -357,8 +413,9 @@ const updateDB = async (data) => {
     schema
       .validate({ ...data })
       .then(async () => {
+        const normalizedCity = normalize(capitalize(data.city));
         const done = await locations.update(
-          { city: normalize(data.city) },
+          { normalizedCity },
           { ...data },
           {
             upsert: true,

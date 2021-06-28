@@ -19,7 +19,6 @@ import { Forecast } from "@models/forecast";
 import { LOADER_TYPES } from '@enums/loader-types.enum';
 import { SearchParams } from '@models/search-params';
 import { Coords } from '@models/coords';
-import { useState } from 'react';
 
 const formData = {
   input: {
@@ -86,7 +85,9 @@ export default function Home(props: any) {
     return Promise.reject(isMounted.current);
   }
 
-  const retrieveWeatherData = (params: { lat: number, lon: number, cityName: string }, messages?: { success?: MESSAGES | string, error?: MESSAGES | string }): void => {
+  const retrieveWeatherData = (params:
+    { lat: number, lon: number, cityName: string },
+    messages?: { success?: MESSAGES | string, error?: MESSAGES | string }): void => {
     api.getAllWeatherByCoords({ ...params, units: "metric" })
       .then((response: Forecast) => {
         if (isMounted.current) {
