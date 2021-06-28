@@ -44,11 +44,6 @@ app.listen(port, () => {
   console.log("Running on port " + port);
 });
 
-// API
-app.get("/", async (req, res) => {
-  res.send("Hello. this route doesn't provide anything special");
-});
-
 /*
 This will call the weather api and return the current weather
 of the city given in the search params string. Units specifies
@@ -427,6 +422,10 @@ const updateDB = async (data) => {
     next(err);
   }
 };
+
+app.get("/*", function (req, res) {
+  res.sendFile(path.join(__dirname, "../build/index.html"));
+});
 
 app.use((error, req, res, next) => {
   if (error.status) {
