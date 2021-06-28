@@ -3,5 +3,7 @@ export class Coords {
         public lat: number | null,
         public lon: number | null,
         public loading: boolean,
-        public error: boolean) { }
+        public error: boolean,
+        public city?: string,
+    ) { }
 }

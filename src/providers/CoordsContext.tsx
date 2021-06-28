@@ -36,7 +36,8 @@ export const CoordsProvider = (props: any): any => {
               lat: res.lat,
               lon: res.lon,
               loading: false,
-              error: true,
+              error: false,
+              city: res.city
             });
           })
           .catch((err) => {
@@ -49,7 +50,7 @@ export const CoordsProvider = (props: any): any => {
             });
           })
       },
-      { timeout: 100 }
+      { timeout: 4500 }
     );
     return () => (isSubscribed = false);
   }, []);

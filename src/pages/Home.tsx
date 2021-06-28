@@ -8,7 +8,7 @@ import {
   getLoadingId,
   getObjIndexFromArray,
 } from "@utils/helpers";
-import { ChangeEvent, useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { FORM_DATA } from "@enums/search-form.enum";
 import { CoordsContext } from "@providers/CoordsContext";
 import { NotificationContext } from "@providers/NotificationContext";
@@ -18,6 +18,8 @@ import Api from "@utils/api";
 import { Forecast } from "@models/forecast";
 import { LOADER_TYPES } from '@enums/loader-types.enum';
 import { SearchParams } from '@models/search-params';
+import { Coords } from '@models/coords';
+import { useState } from 'react';
 
 const formData = {
   input: {
@@ -47,49 +49,31 @@ export default function Home(props: any) {
 
   useEffect(() => {
     if (isMounted.current) {
-      if (!coords.loading && coords.lat !== null && coords.lon !== null) {
+      if (areCoordsValid(coords)) {
         if (!areCoordsInArray(weather, coords)) {
           setLoading({ isLoading: true, id: 0 });
-          api
-            .getCityByCoords({ lat: coords.lat, lon: coords.lon })
-            .then((res: any) => {
-              api
-                .getAllWeatherByCoords({
-                  lat: coords.lat,
-                  lon: coords.lon,
-                  cityName: res.cityName,
-                })
-                .then((response: Forecast) => {
-                  if (isMounted.current) {
-                    updateWeather(response);
-                    handleSuccess(
-                      `${MESSAGES.INITIAL_SUCCESS} - ${response.city}`
-                    );
-                  }
-                })
-                .catch((err: any) => {
-                  if (isMounted.current) {
-                    handleErr(MESSAGES.GENERIC_ERROR, err);
-                  }
-                })
-                .finally(() => {
-                  if (isMounted.current) {
-                    handleStopLoading();
-                  }
-                });
-            })
-            .catch((err: any) => {
-              if (isMounted.current) {
-                handleStopLoading();
-                handleErr(MESSAGES.GENERIC_ERROR, err);
-              }
-            });
+          coords.city
+            ? retrieveWeatherData({ lat: coords.lat, lon: coords.lon, cityName: coords.city }, { success: `${MESSAGES.INITIAL_SUCCESS} - ${coords.city}` })
+            : api.getCityByCoords({ lat: coords.lat, lon: coords.lon })
+              .then((res: any) => {
+                retrieveWeatherData({ lat: coords.lat, lon: coords.lon, cityName: res.cityName }, { success: `${MESSAGES.INITIAL_SUCCESS} - ${res.city}` });
+              })
+              .catch((err: any) => {
+                if (isMounted.current) {
+                  handleStopLoading();
+                  handleErr(MESSAGES.GENERIC_ERROR, err);
+                }
+              });
         }
       }
     }
   }, [coords]);
 
-  const getWeather = (searchParams: SearchParams) => {
+  const areCoordsValid = (coords: Coords): boolean => {
+    return !coords.loading && coords.lat !== null && coords.lon !== null;
+  }
+
+  const getCityName = (searchParams: SearchParams) => {
     if (isMounted.current && searchParams.submitted) {
       const loadingId = getLoadingId(weather, searchParams.searchValue);
       setLoading({
@@ -97,37 +81,47 @@ export default function Home(props: any) {
         id: loadingId,
         isNext: !weather[loadingId],
       });
-      api
-        .getCoordsByCity(searchParams.searchValue)
-        .then((res: any) => {
-          const { lat, lon, cityName } = res;
-          api
-            .getAllWeatherByCoords({ lat, lon, cityName, units: "metric" })
-            .then((response: Forecast) => {
-              if (isMounted.current) {
-                updateWeather(response);
-                handleSuccess(MESSAGES.GENERIC_SUCCESS);
-              }
-            })
-            .catch((err: any) => {
-              if (isMounted.current) {
-                handleErr(err, MESSAGES.GENERIC_ERROR);
-              }
-            })
-            .finally(() => {
-              if (isMounted.current) {
-                handleStopLoading();
-              }
-            });
-        })
-        .catch((err: any) => {
-          if (isMounted.current) {
-            handleStopLoading();
-            handleErr(MESSAGES.GENERIC_ERROR, err);
-          }
-        });
+      return api.getCoordsByCity(searchParams.searchValue);
     }
+    return Promise.reject(isMounted.current);
   }
+
+  const retrieveWeatherData = (params: { lat: number, lon: number, cityName: string }, messages?: { success?: MESSAGES | string, error?: MESSAGES | string }): void => {
+    api.getAllWeatherByCoords({ ...params, units: "metric" })
+      .then((response: Forecast) => {
+        if (isMounted.current) {
+          updateWeather(response);
+          handleSuccess(messages?.success || MESSAGES.GENERIC_SUCCESS);
+        }
+      })
+      .catch((err: any) => {
+        if (isMounted.current) {
+          handleErr(err, messages?.error || MESSAGES.GENERIC_ERROR);
+        }
+      })
+      .finally(() => {
+        if (isMounted.current) {
+          handleStopLoading();
+        }
+      });
+  }
+
+  const onFormSubmit = (params: SearchParams, e: Event): void => {
+    if (e) {
+      e.preventDefault();
+    }
+    getCityName(params)
+      .then((res: any) => {
+        const { lat, lon, cityName } = res;
+        retrieveWeatherData({ lat, lon, cityName });
+      })
+      .catch((err: any) => {
+        if (isMounted.current) {
+          handleStopLoading();
+          handleErr(MESSAGES.GENERIC_ERROR, err);
+        }
+      });
+  };
 
   const updateWeather = (response: Forecast): void => {
     const item = response;
@@ -161,13 +155,6 @@ export default function Home(props: any) {
       isLoading: false,
       isNext: false,
     });
-  };
-
-  const onFormSubmit = (params: SearchParams, e: Event): void => {
-    if (e) {
-      e.preventDefault();
-    }
-    getWeather(params);
   };
 
   return (
