@@ -16,7 +16,7 @@ export default function HourlyForecastInfo(props: any) {
           return (
             <div key={idx} className="hourly-weather-temp-item">
               <img
-                className="weather-card-icon"
+                className={`weather-card-icon _${hour?.weather?.icon}`}
                 src={require(`@media/images/forecast/icons/${hour?.weather?.icon}.png`).default}
                 alt={hour?.temperature.value}
                 width="60"
