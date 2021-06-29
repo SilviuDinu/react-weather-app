@@ -28,7 +28,9 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start-local": "react-app-rewired start",
+    "start": "cd server && node server.js",
+    "heroku-postbuild": "npm run build && cd server/ && npm i && cd ../",
     "server": "cd server && npm run dev",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",

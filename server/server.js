@@ -134,7 +134,6 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
     },
   });
   if (found) {
-    console.log(found);
     res.json({
       lat: found.lat,
       lon: found.lat,
@@ -165,6 +164,7 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
               parseFloat(response.data[0].lat),
             ],
           },
+          updates: found ? found.updates + 1 : 0,
         });
       })
       .catch((error) => {
@@ -199,6 +199,7 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
                       ),
                     ],
                   },
+                  updates: found ? found.updates + 1 : 0,
                 });
               })
               .catch((error) => {
@@ -251,7 +252,6 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
     ],
   });
   if (found) {
-    console.log(found);
     data = {
       lat: found.lat,
       lon: found.lon,
@@ -300,6 +300,7 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
                     parseFloat(response.data.results[0].geometry.location.lat),
                   ],
                 },
+                updates: found ? found.updates + 1 : 0,
               });
             });
         } else {
@@ -322,6 +323,7 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
                 parseFloat(response.data[0].lat),
               ],
             },
+            updates: found ? found.updates + 1 : 0,
           });
         }
       })
@@ -389,6 +391,7 @@ app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
           type: "Point",
           coordinates: [parseFloat(lon), parseFloat(lat)],
         },
+        updates: found ? found.updates + 1 : 0,
       });
     } else {
       next({ message: "error" });
@@ -459,6 +462,7 @@ app.get("/mockapi/current/city-to-coords", async (req, res, next) => {
         type: "Point",
         coordinates: [parseFloat(data.lon), parseFloat(data.lat)],
       },
+      updates: found ? found.updates + 1 : 0,
     });
   } catch (error) {
     next(error);
@@ -497,6 +501,9 @@ app.get("/mockapi/one/coords", (req, res, next) => {
 });
 
 const updateDB = async (data) => {
+  if (data.updates >= Number.MAX_SAFE_INTEGER) {
+    data.updates = 0;
+  }
   try {
     schema
       .validate({ ...data })
@@ -505,9 +512,7 @@ const updateDB = async (data) => {
         const done = await locations.update(
           { normalizedCity },
           { ...data },
-          {
-            upsert: true,
-          }
+          { upsert: true }
         );
       })
       .catch((err) => console.log(err));
