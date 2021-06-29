@@ -26,16 +26,17 @@ export default function HourlyForecastInfo(props: any) {
               <span className="hourly-weather-temp hour">
                 {hour?.timeOfRequest.format("HH:mm")}
               </span>
-              <span className="hourly-weather-temp pp-chance">
-                <img
-                  src={require(`@media/images/temperature/drop.svg`).default}
-                  className="temp-hot"
-                  width="25"
-                  height="auto"
-                  alt="logo"
-                />
-                {`${Math.round((hour as any)?.ppChance * 100)}%`}
-              </span>
+              {(hour as any)?.ppChance > 0 ?
+                <span className="hourly-weather-temp pp-chance">
+                  <img
+                    src={require(`@media/images/temperature/drop.svg`).default}
+                    className="temp-hot"
+                    width="25"
+                    height="auto"
+                    alt="logo"
+                  />
+                  {`${Math.round((hour as any)?.ppChance * 100)}%`}
+                </span> : null}
               <span className="hourly-weather-temp current">
                 {`${parseInt(hour?.temperature?.value)}`}
                 {SYMBOLS.CELSIUS}

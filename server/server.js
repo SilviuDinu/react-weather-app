@@ -379,7 +379,7 @@ app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
       );
     }
     if (result) {
-      res.json(result);
+      res.json({ ...result, city: result.name });
       updateDB({
         normalizedCity: normalize(capitalize(result.name)),
         city: result.name,

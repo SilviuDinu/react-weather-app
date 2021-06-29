@@ -1,13 +1,17 @@
 import { MISC } from "@enums/misc.enum";
 import { SYMBOLS } from "@enums/symbols.enum";
 import { capitalize } from "lodash";
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 
 export default function CurrentForecastInfo(props: any) {
   const { data } = props;
   return (
     <div className="current-weather-info">
       <div className="weather-card-overview">
-        <h2 className="weather-card-title">{props.title || "Unknown"}</h2>
+        <div className="weather-card-title-wrapper">
+          <h2 className="weather-card-title">{props.title || "Unknown"}</h2>
+          {props.isCurrentCity ? <span className="current-location-icon"> <LocationOnIcon /> </span> : null}
+        </div>
         <div className="weather-card-icon-wrapper">
           <img
             className="weather-card-icon"
@@ -49,7 +53,7 @@ export default function CurrentForecastInfo(props: any) {
           {SYMBOLS.CELSIUS}
         </span>
         <span className="weather-card-temp humidity">
-        {/* <img
+          {/* <img
             src={require(`@media/images/temperature/humidity.svg`).default}
             className="temp-humidity"
             width="30"
