@@ -31,3 +31,5 @@ src/media/images/forecast/DSC_0087.png
 src/media/images/forecast/DSC_0093.png
 src/media/images/forecast/DSC_0094.png
 src/media/images/forecast/overcast_clouds_with_rain.png
+ssl/forecast-report.csr
+ssl/forecast-report.key
