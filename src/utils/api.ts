@@ -89,8 +89,8 @@ export default class Api {
             })
     };
 
-    getCoordsByCity = async (cityName: string): Promise<any> => {
-        const query = cityName ? encodeURI(`?cityName=${cityName}`) : '';
+    getCoordsByCity = async (city: string): Promise<any> => {
+        const query = city ? encodeURI(`?city=${city}`) : '';
         const promise = fetch(ENDPOINTS.GET_COORDS_BY_CITY + query, {
             method: "GET",
             headers: { "Content-Type": "application/json" }

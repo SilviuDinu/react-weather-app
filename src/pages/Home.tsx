@@ -19,7 +19,6 @@ import { Forecast } from "@models/forecast";
 import { LOADER_TYPES } from '@enums/loader-types.enum';
 import { SearchParams } from '@models/search-params';
 import { Coords } from '@models/coords';
-import { useState } from 'react';
 
 const formData = {
   input: {
@@ -53,10 +52,10 @@ export default function Home(props: any) {
         if (!areCoordsInArray(weather, coords)) {
           setLoading({ isLoading: true, id: 0 });
           coords.city
-            ? retrieveWeatherData({ lat: coords.lat, lon: coords.lon, cityName: coords.city }, { success: `${MESSAGES.INITIAL_SUCCESS} - ${coords.city}` })
+            ? retrieveWeatherData({ lat: coords.lat, lon: coords.lon, city: coords.city }, { success: `${MESSAGES.INITIAL_SUCCESS} - ${coords.city}` })
             : api.getCityByCoords({ lat: coords.lat, lon: coords.lon })
               .then((res: any) => {
-                retrieveWeatherData({ lat: coords.lat, lon: coords.lon, cityName: res.cityName }, { success: `${MESSAGES.INITIAL_SUCCESS} - ${res.city}` });
+                retrieveWeatherData({ lat: coords.lat, lon: coords.lon, city: res.city }, { success: `${MESSAGES.INITIAL_SUCCESS} - ${res.city}` });
               })
               .catch((err: any) => {
                 if (isMounted.current) {
@@ -73,7 +72,7 @@ export default function Home(props: any) {
     return !coords.loading && coords.lat !== null && coords.lon !== null;
   }
 
-  const getCityName = (searchParams: SearchParams) => {
+  const getCityData = (searchParams: SearchParams) => {
     if (isMounted.current && searchParams.submitted) {
       const loadingId = getLoadingId(weather, searchParams.searchValue);
       setLoading({
@@ -86,7 +85,9 @@ export default function Home(props: any) {
     return Promise.reject(isMounted.current);
   }
 
-  const retrieveWeatherData = (params: { lat: number, lon: number, cityName: string }, messages?: { success?: MESSAGES | string, error?: MESSAGES | string }): void => {
+  const retrieveWeatherData = (params:
+    { lat: number, lon: number, city: string },
+    messages?: { success?: MESSAGES | string, error?: MESSAGES | string }): void => {
     api.getAllWeatherByCoords({ ...params, units: "metric" })
       .then((response: Forecast) => {
         if (isMounted.current) {
@@ -110,10 +111,10 @@ export default function Home(props: any) {
     if (e) {
       e.preventDefault();
     }
-    getCityName(params)
+    getCityData(params)
       .then((res: any) => {
-        const { lat, lon, cityName } = res;
-        retrieveWeatherData({ lat, lon, cityName });
+        const { lat, lon, city } = res;
+        retrieveWeatherData({ lat, lon, city });
       })
       .catch((err: any) => {
         if (isMounted.current) {

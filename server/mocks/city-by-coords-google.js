@@ -399,3 +399,48 @@ module.exports = {
   ],
   status: "OK",
 };
+
+const cucu = {
+  results: [
+    {
+      address_components: [
+        {
+          long_name: "Negoiești",
+          short_name: "Negoiești",
+          types: ["locality", "political"],
+        },
+        {
+          long_name: "Brazi",
+          short_name: "Brazi",
+          types: ["administrative_area_level_2", "political"],
+        },
+        {
+          long_name: "Prahova",
+          short_name: "PH",
+          types: ["administrative_area_level_1", "political"],
+        },
+        {
+          long_name: "Romania",
+          short_name: "RO",
+          types: ["country", "political"],
+        },
+      ],
+      formatted_address: "Negoiești, Romania",
+      geometry: {
+        bounds: {
+          northeast: { lat: 44.8829836, lng: 25.9893286 },
+          southwest: { lat: 44.8609491, lng: 25.9708213 },
+        },
+        location: { lat: 44.8735578, lng: 25.9808407 },
+        location_type: "APPROXIMATE",
+        viewport: {
+          northeast: { lat: 44.8829836, lng: 25.9893286 },
+          southwest: { lat: 44.8609491, lng: 25.9708213 },
+        },
+      },
+      place_id: "ChIJadilCuJHskARDw83crUaX6E",
+      types: ["locality", "political"],
+    },
+  ],
+  status: "OK",
+};
