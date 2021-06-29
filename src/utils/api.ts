@@ -7,6 +7,9 @@ export default class Api {
 
     private forecastAdapter: ForecastAdapter = new ForecastAdapter();
 
+    GEOLOCATION_API_URL = process.env.GEOLOCATION_API_URL;
+    GEOLOCATION_API_KEY = process.env.GEOLOCATION_API_KEY;
+
     constructor() { }
 
     getWeatherByCity = (params: any): Promise<any> => {
@@ -75,7 +78,7 @@ export default class Api {
     };
 
     getLocationByIP = async (): Promise<any> => {
-        const promise = fetch(ENDPOINTS.GET_COORDS_BY_IP, {
+        const promise = fetch(`https://${this.GEOLOCATION_API_URL}/?api_key=${this.GEOLOCATION_API_KEY}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         });

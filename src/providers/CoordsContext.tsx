@@ -33,8 +33,8 @@ export const CoordsProvider = (props: any): any => {
         api.getLocationByIP()
           .then((res) => {
             setCoords({
-              lat: res.lat,
-              lon: res.lon,
+              lat: res.latitude,
+              lon: res.longitude,
               loading: false,
               error: false,
               city: res.city
