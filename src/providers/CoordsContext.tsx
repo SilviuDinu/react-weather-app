@@ -1,4 +1,5 @@
 import { Coords } from "@models/coords";
+import Api from '@utils/api';
 import { createContext, useEffect, useState } from "react";
 
 const defaultValue = {
@@ -7,6 +8,8 @@ const defaultValue = {
   loading: true,
   error: false,
 };
+
+const api = new Api();
 
 export const CoordsProvider = (props: any): any => {
   const [coords, setCoords] = useState<Coords>(defaultValue);
@@ -27,14 +30,27 @@ export const CoordsProvider = (props: any): any => {
         }
       },
       (error) => {
-        setCoords((coords: Coords) => {
-          return {
-            ...coords,
-            loading: false,
-            error: true,
-          };
-        });
-      }
+        api.getLocationByIP()
+          .then((res) => {
+            setCoords({
+              lat: res.lat,
+              lon: res.lon,
+              loading: false,
+              error: false,
+              city: res.city
+            });
+          })
+          .catch((err) => {
+            setCoords((coords: Coords) => {
+              return {
+                ...coords,
+                loading: false,
+                error: true,
+              };
+            });
+          })
+      },
+      { timeout: 4500 }
     );
     return () => (isSubscribed = false);
   }, []);

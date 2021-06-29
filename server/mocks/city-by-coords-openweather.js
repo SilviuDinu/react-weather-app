@@ -16,10 +16,9 @@ module.exports = [
       pt: "Ploieşti",
       ro: "Ploiești",
     },
-    lat: 44.95,
+    lat: 44.9298757,
     lon: 26.0167,
     country: "RO",
-    cityName: "Ploieşti",
   },
   {
     name: "Cluj",

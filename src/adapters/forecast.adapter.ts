@@ -15,9 +15,9 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
     }
 
     adaptOneCall(data: any): Forecast {
-        const { lat, lon, timezone, timezone_offset, cityName } = data || {};
+        const { lat, lon, timezone, timezone_offset, city } = data || {};
         return new Forecast(
-            cityName,
+            city,
             lat,
             lon,
             timezone,
