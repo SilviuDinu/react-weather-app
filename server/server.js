@@ -141,7 +141,7 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
       localNames: [],
       found,
     });
-    incrementCityUpdate();
+    incrementCityUpdate(found);
   } else {
     axios
       .get(
@@ -262,7 +262,7 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
       found,
     };
     res.json(data);
-    incrementCityUpdate();
+    incrementCityUpdate(found);
   } else {
     const url = countryCode
       ? encodeURI(
@@ -525,7 +525,10 @@ const updateDB = async (data) => {
   }
 };
 
-const incrementCityUpdate = async () => {
+const incrementCityUpdate = async (found) => {
+  if (!found) {
+    return;
+  }
   const done = await locations.findOneAndUpdate(
     { _id: found._id },
     { $inc: { updates: 1 } }
