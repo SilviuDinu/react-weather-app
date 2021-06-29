@@ -139,7 +139,9 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
       lon: found.lat,
       city: found.city,
       localNames: [],
+      found,
     });
+    incrementCityUpdate();
   } else {
     axios
       .get(
@@ -257,8 +259,10 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
       lon: found.lon,
       city: found.city,
       localNames: [],
+      found,
     };
     res.json(data);
+    incrementCityUpdate();
   } else {
     const url = countryCode
       ? encodeURI(
@@ -519,6 +523,13 @@ const updateDB = async (data) => {
   } catch (err) {
     next(err);
   }
+};
+
+const incrementCityUpdate = async () => {
+  const done = await locations.findOneAndUpdate(
+    { _id: found._id },
+    { $inc: { updates: 1 } }
+  );
 };
 
 app.get("/*", function (req, res) {

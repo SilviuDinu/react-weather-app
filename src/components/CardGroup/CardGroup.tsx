@@ -9,7 +9,6 @@ import { normalize } from '@utils/helpers';
 import { capitalize } from 'lodash';
 
 export default function CardGroup(props: any) {
-  const { currentCity } = props;
   const [weather] = useContext(WeatherContext);
   const [loading] = useContext(LoadingContext);
 
@@ -32,10 +31,6 @@ export default function CardGroup(props: any) {
     );
   };
 
-  const isCurrentCity = (city: string): boolean => {
-    return city === currentCity || normalize(capitalize(city)) === normalize(capitalize(currentCity));
-  }
-
   return (
     <div className="card-group">
       {weather.map((item: any, index: number) =>
@@ -54,7 +49,6 @@ export default function CardGroup(props: any) {
             key={index}
             title={item.city}
             id={index}
-            isCurrentCity={isCurrentCity(item.city)}
             data={item as Forecast}
           ></Card>
       )}

@@ -1,16 +1,24 @@
 import { MISC } from "@enums/misc.enum";
 import { SYMBOLS } from "@enums/symbols.enum";
-import { capitalize } from "lodash";
 import LocationOnIcon from '@material-ui/icons/LocationOn';
+import { useContext } from 'react';
+import { CurrentCityContext } from '@providers/CurrentCityContext';
+import { normalize, capitalize } from '@utils/helpers';
 
 export default function CurrentForecastInfo(props: any) {
   const { data } = props;
+  const [currentCity] = useContext(CurrentCityContext);
+
+  const isCurrentCity = (city: string): boolean => {
+    return city === currentCity || normalize(capitalize(city)) === normalize(capitalize(currentCity));
+  }
+
   return (
     <div className="current-weather-info">
       <div className="weather-card-overview">
         <div className="weather-card-title-wrapper">
           <h2 className="weather-card-title">{props.title || "Unknown"}</h2>
-          {props.isCurrentCity ? <span className="current-location-icon"> <LocationOnIcon /> </span> : null}
+          {isCurrentCity(props.title) ? <span className="current-location-icon"> <LocationOnIcon /> </span> : null}
         </div>
         <div className="weather-card-icon-wrapper">
           <img

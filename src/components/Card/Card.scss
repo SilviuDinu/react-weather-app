@@ -1,5 +1,4 @@
-@import '../../mixins.scss';
-
+@import "../../mixins.scss";
 
 .card-group {
   .weather-card-wrapper {
@@ -56,9 +55,9 @@
     .weather-card-disclaimer {
       margin-top: 16px;
     }
-    
+
     &.clear-sky {
-      background-image: url('../../media/images/forecast/clear_sky.png');
+      background-image: url("../../media/images/forecast/clear_sky.png");
       background-size: auto;
       @include animate(clearSky, 0%, 50%, 100%, 60%, 0%, 25%, 600s);
 
@@ -68,7 +67,7 @@
     }
 
     &.overcast-clouds {
-      background-image: url('../../media/images/forecast/overcast_clouds.png');
+      background-image: url("../../media/images/forecast/overcast_clouds.png");
       background-size: auto;
       @include animate(overcastClouds, 0%, 100%, 100%, 100%, 0%, 80%, 800s);
 
@@ -78,7 +77,7 @@
     }
 
     &.few-clouds {
-      background-image: url('../../media/images/forecast/few_clouds.png');
+      background-image: url("../../media/images/forecast/few_clouds.png");
       background-size: auto;
       @include animate(fewClouds, 0%, 90%, 100%, 60%, 0%, 25%, 600s);
 
@@ -87,21 +86,36 @@
       }
     }
 
-    &.moderate-rain {
-      // background-image: url('../../media/images/forecast/light_rain.png');
-      @include animate(moderateRain, 0%, 90%, 100%, 60%, 0%, 25%, 300s);
+    &.moderate-rain,
+    &.light-rain {
+      background-image: url("../../media/images/forecast/rain.png"),
+        url("../../media/images/forecast/overcast_clouds.png");
+      background-size: 200% 200%, auto;
+      @include animate(moderateRain, 0%, 100%, 0%, 50%, 0%, 0%, 300s);
+
+      @media screen and (max-width: 768px) {
+        background-size: auto;
+      }
     }
 
     &.broken-clouds {
-      background-image: url('../../media/images/forecast/overcast_clouds.png');
-      @include animate(brokenClouds, 0%, 90%, 100%, 60%, 0%, 25%, 300s);
+      background-image: url("../../media/images/forecast/broken_clouds.png");
+      background-size: auto;
+      @include animate(brokenClouds, 0%, 90%, 100%, 60%, 0%, 25%, 600s);
+
+      @media screen and (max-width: 768px) {
+        background-size: auto;
+      }
     }
 
-    &.light-rain {
-      // background-image: url('../../media/images/forecast/light_rain.png');
-      background-size: cover;
-      // animation: animatedBackgroundVertical 60s linear infinite;
-      // animation-fill-mode: forwards;
+    &.scattered-clouds {
+      background-image: url("../../media/images/forecast/broken_clouds.png");
+      background-size: auto;
+      @include animate(scatteredClouds, 0%, 90%, 100%, 60%, 0%, 25%, 600s);
+
+      @media screen and (max-width: 768px) {
+        background-size: auto;
+      }
     }
 
     .weather-card-accordion-summary {
@@ -224,6 +238,3 @@
     }
   }
 }
-
-
-

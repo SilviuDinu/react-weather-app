@@ -176,7 +176,7 @@ export default function Home(props: any) {
         {coords.loading && !coords.error ? (
           <Loader isLoading={coords.loading} type={LOADER_TYPES.SPINNER} />
         ) : (
-          <CardGroup currentCity={currentCity} />
+          <CardGroup />
         )}
       </div>
     </div>
