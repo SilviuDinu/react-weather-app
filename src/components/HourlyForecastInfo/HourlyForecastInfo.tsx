@@ -34,7 +34,7 @@ export default function HourlyForecastInfo(props: any) {
                   height="auto"
                   alt="logo"
                 />
-                {`${(hour as any)?.ppChance * 100}%`}
+                {`${Math.round((hour as any)?.ppChance * 100)}%`}
               </span>
               <span className="hourly-weather-temp current">
                 {`${parseInt(hour?.temperature?.value)}`}
