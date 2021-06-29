@@ -7,12 +7,8 @@ export default function Loader(props: any) {
     isLoading,
     numRows,
     numCols,
-    maxRowWidth = 100,
-    minRowWidth = 75,
     rowWidth,
-    rowHeight = 20,
-    contentMargin = 30,
-    maintainRowWidth = false
+    rowHeight = 20
   } = props;
 
   const renderBlocks = (rows: number, cols: number): ReactElement[] => {

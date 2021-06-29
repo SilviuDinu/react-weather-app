@@ -36,7 +36,7 @@ const api = new Api();
 
 export default function Home(props: any) {
   const isMounted = useRef(true);
-  const [currentCity, setCurrentCity] = useContext(CurrentCityContext);
+  const [, setCurrentCity] = useContext(CurrentCityContext);
   const [, setNotification] = useContext(NotificationContext);
   const [loading, setLoading] = useContext(LoadingContext);
   const [coords] = useContext(CoordsContext);

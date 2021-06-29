@@ -20,7 +20,7 @@ module.exports = [
       wind_deg: 313,
       wind_gust: 4.33,
       weather: [
-        { id: 500, main: "Rain", description: "moderate rain", icon: "10d" },
+        { id: 500, main: "Rain", description: "clear sky", icon: "01n" },
       ],
       rain: { "1h": 0.24 },
     },

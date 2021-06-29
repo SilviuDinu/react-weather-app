@@ -5,8 +5,6 @@ import { Forecast } from "@models/forecast";
 import Loader from "@components/Loader/Loader";
 import { LoadingContext } from "@providers/LoadingContext";
 import { LOADER_TYPES } from "@enums/loader-types.enum";
-import { normalize } from '@utils/helpers';
-import { capitalize } from 'lodash';
 
 export default function CardGroup(props: any) {
   const [weather] = useContext(WeatherContext);

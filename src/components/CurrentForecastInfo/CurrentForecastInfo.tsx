@@ -22,7 +22,7 @@ export default function CurrentForecastInfo(props: any) {
         </div>
         <div className="weather-card-icon-wrapper">
           <img
-            className="weather-card-icon"
+            className={`weather-card-icon _${data?.weather?.icon}`}
             src={require(`@media/images/forecast/icons/${data?.weather?.icon}.png`).default}
             alt={data?.temperature.value}
             width="65"

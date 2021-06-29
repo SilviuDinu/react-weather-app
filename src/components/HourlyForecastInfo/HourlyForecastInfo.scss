@@ -32,6 +32,19 @@
         .hourly-weather-temp-item {
           display: flex;
           flex-direction: column;
+          align-items: center;
+
+          .weather-card-icon {
+            @media (max-width: 992px) {
+              width: 55px;
+              height: auto;
+            }
+
+            @media (max-width: 400px) {
+              width: 50px;
+              height: auto;
+            }
+          }
         }
       }
 

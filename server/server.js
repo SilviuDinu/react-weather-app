@@ -213,7 +213,7 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
 });
 
 app.get("/api/current/location", (req, res, next) => {
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   axios
     .get(`https://${GEOLOCATION_API_URL}/?api_key=${GEOLOCATION_API_KEY}&ip_address=${ip}`)
     .then((response) => {
@@ -407,7 +407,7 @@ app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
 });
 
 app.get("/mockapi/current/location", (req, res, next) => {
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   try {
     res.json({
       ip: ipLocation.ip_address,

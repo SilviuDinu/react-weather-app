@@ -1,4 +1,3 @@
-import { MISC } from "@enums/misc.enum";
 import { SYMBOLS } from "@enums/symbols.enum";
 import { ForecastInfo } from "@models/forecast";
 import { useState } from "react";

@@ -32,12 +32,14 @@ export const CoordsProvider = (props: any): any => {
       (error) => {
         api.getLocationByIP()
           .then((res) => {
-            setCoords({
-              lat: res.lat,
-              lon: res.lon,
-              loading: false,
-              error: false,
-              city: res.city
+            setCoords((coords: Coords) => {
+              return {
+                lat: res.lat,
+                lon: res.lon,
+                loading: false,
+                error: false,
+                city: res.city
+              };
             });
           })
           .catch((err) => {
