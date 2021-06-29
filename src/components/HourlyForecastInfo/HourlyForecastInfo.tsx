@@ -20,8 +20,8 @@ export default function HourlyForecastInfo(props: any) {
                 className="weather-card-icon"
                 src={require(`@media/images/forecast/icons/${hour?.weather?.icon}.png`).default}
                 alt={hour?.temperature.value}
-                width="65"
-                height="65"
+                width="60"
+                height="60"
               />
               <span className="hourly-weather-temp hour">
                 {hour?.timeOfRequest.format("HH:mm")}
