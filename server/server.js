@@ -44,6 +44,12 @@ app.listen(port, () => {
   console.log("Running on port " + port);
 });
 
+if (process.env.NODE_ENV === "production") {
+  app.use((req, res, next) => {
+    req.secure ? next() : res.redirect("https://" + req.headers.host + req.url);
+  });
+}
+
 /*
 This will call the weather api and return the current weather
 of the city given in the search params string. Units specifies
@@ -213,9 +219,12 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
 });
 
 app.get("/api/current/location", (req, res, next) => {
-  const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip =
+    req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   axios
-    .get(`https://${GEOLOCATION_API_URL}/?api_key=${GEOLOCATION_API_KEY}&ip_address=${ip}`)
+    .get(
+      `https://${GEOLOCATION_API_URL}/?api_key=${GEOLOCATION_API_KEY}&ip_address=${ip}`
+    )
     .then((response) => {
       res.json({
         ip: response.data.ip_address,
@@ -407,7 +416,8 @@ app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
 });
 
 app.get("/mockapi/current/location", (req, res, next) => {
-  const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip =
+    req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   try {
     res.json({
       ip: ipLocation.ip_address,
