@@ -51,7 +51,7 @@ export default function Card(props: any) {
             expandIcon: "expanded",
           }}
         >
-          <CurrentForecastInfo data={currentInfo} title={props.title} />
+          <CurrentForecastInfo data={currentInfo} title={props.title} isCurrentCity={props.isCurrentCity} />
         </AccordionSummary>
         <AccordionDetails classes={{ root: classes.root }} className="expanded">
           <HourlyForecastInfo data={hourlyInfo} />

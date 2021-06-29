@@ -10,6 +10,7 @@ import { WeatherProvider } from "@providers/WeatherContext";
 import { CoordsProvider } from "@providers/CoordsContext";
 import { LoadingProvider } from "@providers/LoadingContext";
 import { NotificationProvider } from "@providers/NotificationContext";
+import { CurrentCityProvider } from "@providers/CurrentCityContext";
 
 function App() {
   return (
@@ -20,21 +21,23 @@ function App() {
           <NotificationProvider>
             <WeatherProvider>
               <LoadingProvider>
-                <CoordsProvider>
-                  <Switch>
-                    {/* @ts-ignore */}
-                    <Route exact path="/">
-                      <Home />
-                    </Route>
-                    {/* @ts-ignore */}
-                    <Route exact path="/about">
-                      <About />
-                    </Route>
-                    <Route path="*">
-                      <Page404 />
-                    </Route>
-                  </Switch>
-                </CoordsProvider>
+                <CurrentCityProvider>
+                  <CoordsProvider>
+                    <Switch>
+                      {/* @ts-ignore */}
+                      <Route exact path="/">
+                        <Home />
+                      </Route>
+                      {/* @ts-ignore */}
+                      <Route exact path="/about">
+                        <About />
+                      </Route>
+                      <Route path="*">
+                        <Page404 />
+                      </Route>
+                    </Switch>
+                  </CoordsProvider>
+                </CurrentCityProvider>
               </LoadingProvider>
             </WeatherProvider>
           </NotificationProvider>

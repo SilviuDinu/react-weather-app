@@ -19,6 +19,7 @@ import { Forecast } from "@models/forecast";
 import { LOADER_TYPES } from '@enums/loader-types.enum';
 import { SearchParams } from '@models/search-params';
 import { Coords } from '@models/coords';
+import { CurrentCityContext } from '@providers/CurrentCityContext';
 
 const formData = {
   input: {
@@ -35,8 +36,9 @@ const api = new Api();
 
 export default function Home(props: any) {
   const isMounted = useRef(true);
+  const [currentCity, setCurrentCity] = useContext(CurrentCityContext);
   const [, setNotification] = useContext(NotificationContext);
-  const [, setLoading] = useContext(LoadingContext);
+  const [loading, setLoading] = useContext(LoadingContext);
   const [coords] = useContext(CoordsContext);
   const [weather, setWeather] = useContext(WeatherContext);
 
@@ -51,11 +53,15 @@ export default function Home(props: any) {
       if (areCoordsValid(coords)) {
         if (!areCoordsInArray(weather, coords)) {
           setLoading({ isLoading: true, id: 0 });
-          coords.city
-            ? retrieveWeatherData({ lat: coords.lat, lon: coords.lon, city: coords.city }, { success: `${MESSAGES.INITIAL_SUCCESS} - ${coords.city}` })
-            : api.getCityByCoords({ lat: coords.lat, lon: coords.lon })
+          if (coords.city) {
+            retrieveWeatherData({ lat: coords.lat, lon: coords.lon, city: coords.city }, { success: `${MESSAGES.INITIAL_SUCCESS} - ${coords.city}` });
+            setCurrentCity(coords.city);
+          }
+          else {
+            api.getCityByCoords({ lat: coords.lat, lon: coords.lon })
               .then((res: any) => {
                 retrieveWeatherData({ lat: coords.lat, lon: coords.lon, city: res.city }, { success: `${MESSAGES.INITIAL_SUCCESS} - ${res.city}` });
+                setCurrentCity(res.city);
               })
               .catch((err: any) => {
                 if (isMounted.current) {
@@ -63,6 +69,7 @@ export default function Home(props: any) {
                   handleErr(MESSAGES.GENERIC_ERROR, err);
                 }
               });
+          }
         }
       }
     }
@@ -111,17 +118,19 @@ export default function Home(props: any) {
     if (e) {
       e.preventDefault();
     }
-    getCityData(params)
-      .then((res: any) => {
-        const { lat, lon, city } = res;
-        retrieveWeatherData({ lat, lon, city });
-      })
-      .catch((err: any) => {
-        if (isMounted.current) {
-          handleStopLoading();
-          handleErr(MESSAGES.GENERIC_ERROR, err);
-        }
-      });
+    if (!loading.isLoading && !coords.loading) {
+      getCityData(params)
+        .then((res: any) => {
+          const { lat, lon, city } = res;
+          retrieveWeatherData({ lat, lon, city });
+        })
+        .catch((err: any) => {
+          if (isMounted.current) {
+            handleStopLoading();
+            handleErr(MESSAGES.GENERIC_ERROR, err);
+          }
+        });
+    }
   };
 
   const updateWeather = (response: Forecast): void => {
@@ -167,7 +176,7 @@ export default function Home(props: any) {
         {coords.loading && !coords.error ? (
           <Loader isLoading={coords.loading} type={LOADER_TYPES.SPINNER} />
         ) : (
-          <CardGroup />
+          <CardGroup currentCity={currentCity} />
         )}
       </div>
     </div>
