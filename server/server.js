@@ -142,7 +142,7 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
   if (found) {
     res.json({
       lat: found.lat,
-      lon: found.lat,
+      lon: found.lon,
       city: found.city,
       localNames: [],
       found,
@@ -156,7 +156,7 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
       .then((response) => {
         res.json({
           lat: response.data[0].lat,
-          lon: response.data[0].lat,
+          lon: response.data[0].lon,
           city: response.data[0].name,
           localNames: response.data[0].local_names,
         });
@@ -164,11 +164,11 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
           normalizedCity: normalize(response.data[0].name),
           city: response.data[0].name,
           lat: response.data[0].lat,
-          lon: response.data[0].lat,
+          lon: response.data[0].lon,
           geometry: {
             type: "Point",
             coordinates: [
-              parseFloat(response.data[0].lat),
+              parseFloat(response.data[0].lon),
               parseFloat(response.data[0].lat),
             ],
           },
@@ -316,6 +316,9 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
                 },
                 updates: found ? found.updates + 1 : 0,
               });
+            })
+            .catch((error) => {
+              next(error);
             });
         } else {
           data = {
@@ -369,7 +372,7 @@ app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
   const latlng = [lat, lon].join(",");
   let result;
   try {
-    locations.ensureIndex({ geometry: "2dsphere" });
+    await locations.ensureIndex({ geometry: "2dsphere" });
     const found = await locations.findOne({
       geometry: {
         $near: {
@@ -395,7 +398,7 @@ app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
       );
     }
     if (result) {
-      res.json({ ...result, city: result.name });
+      res.json({ ...result, city: result.name, found });
       updateDB({
         normalizedCity: normalize(capitalize(result.name)),
         city: result.name,
