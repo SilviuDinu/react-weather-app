@@ -221,31 +221,53 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
 app.get("/api/current/location", (req, res, next) => {
   const ip =
     req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
   axios
-    .get(
-      `https://${GEOLOCATION_API_URL}/?api_key=${GEOLOCATION_API_KEY}&ip_address=${ip}`
-    )
+    .get(`http://ip-api.com/json/${ip}`)
     .then((response) => {
       res.json({
-        ip: response.data.ip_address,
+        ip: response.data.query,
         city: response.data.city,
-        cityId: response.data.city_geoname_id,
-        region: response.data.region,
-        regionCode: response.data.region_iso_code,
+        cityId: response.data.city_geoname_id || null,
+        region: response.data.regionName,
+        regionCode: response.data.region || null,
         country: response.data.country,
-        countryCode: response.data.country_code,
-        continent: response.data.continent,
-        continentCode: response.data.continent_code,
-        lat: response.data.latitude,
-        lon: response.data.longitude,
-        time: response.data.current_time,
-        isVpn: response.data.security.is_vpn,
-        response: response.data,
-        ipaddress: ip,
+        countryCode: response.data.countryCode,
+        continent: response.data.continent || null,
+        continentCode: response.data.continent_code || null,
+        lat: response.data.lat,
+        lon: response.data.lon,
+        time: response.data.current_time || null,
+        isVpn: response.data.security.is_vpn || null,
+        raw: response.data,
       });
     })
     .catch((error) => {
-      next(error);
+      axios
+        .get(
+          `https://${GEOLOCATION_API_URL}/?api_key=${GEOLOCATION_API_KEY}&ip_address=${ip}`
+        )
+        .then((response) => {
+          res.json({
+            ip: response.data.ip_address,
+            city: response.data.city,
+            cityId: response.data.city_geoname_id,
+            region: response.data.region,
+            regionCode: response.data.region_iso_code,
+            country: response.data.country,
+            countryCode: response.data.country_code,
+            continent: response.data.continent,
+            continentCode: response.data.continent_code,
+            lat: response.data.latitude,
+            lon: response.data.longitude,
+            time: response.data.current_time,
+            isVpn: response.data.security.is_vpn,
+            raw: response.data,
+          });
+        })
+        .catch((error) => {
+          next(error);
+        });
     });
 });
 
