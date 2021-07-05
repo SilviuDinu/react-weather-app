@@ -240,6 +240,8 @@ app.get("/api/current/location", (req, res, next) => {
         lon: response.data.longitude,
         time: response.data.current_time,
         isVpn: response.data.security.is_vpn,
+        response: response.data,
+        ipaddress: ip,
       });
     })
     .catch((error) => {
