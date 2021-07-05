@@ -239,7 +239,6 @@ app.get("/api/current/location", (req, res, next) => {
         lon: response.data.lon,
         time: response.data.current_time || null,
         isVpn: response.data.security.is_vpn || null,
-        raw: response.data,
       });
     })
     .catch((error) => {
@@ -262,10 +261,7 @@ app.get("/api/current/location", (req, res, next) => {
             lon: response.data.longitude,
             time: response.data.current_time,
             isVpn: response.data.security.is_vpn,
-            raw: response.data,
             error,
-            firstUrl: `http://ip-api.com/json/${ip}`,
-            secondUrl: `https://${GEOLOCATION_API_URL}/?api_key=${GEOLOCATION_API_KEY}&ip_address=${ip}`,
           });
         })
         .catch((error) => {
