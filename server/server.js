@@ -357,9 +357,9 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
                 localNames: [],
               };
               res.json(data);
-              const found = await getDBRecord({ city: cityName });
-              if (found) {
-                incrementCityUpdate(found._id);
+              const record = await getDBRecord({ city: cityName });
+              if (record) {
+                incrementCityUpdate(record._id);
               } else {
                 updateDB({
                   normalizedCity: normalize(cityName),
@@ -377,8 +377,8 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
                       ),
                     ],
                   },
-                  updates: found ? found.updates : 0,
-                  ip: found && !!found.ip.length ? [...found.ip] : [],
+                  updates: record ? record.updates : 0,
+                  ip: record && !!record.ip.length ? [...record.ip] : [],
                 });
               }
             })
