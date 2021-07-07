@@ -220,7 +220,6 @@ app.get("/api/current/location", async (req, res, next) => {
       const { data } = response;
       const [lat, lon] = data.loc.split(",");
       const found = await getDBRecord({
-        ip,
         city: data.city,
       });
       res.json({
@@ -260,7 +259,6 @@ app.get("/api/current/location", async (req, res, next) => {
         .then(async (response) => {
           const { data } = response;
           const found = await getDBRecord({
-            ip,
             city: data.city,
             lat: parseFloat(data.latitude),
             lon: parseFloat(data.longitude),
@@ -490,7 +488,6 @@ app.get("/mockapi/current/location", async (req, res, next) => {
     isVpn: ipLocation.security.is_vpn,
   });
   const found = await getDBRecord({
-    ip: ipLocation.ip_address,
     city: ipLocation.city,
   });
   if (found) {
@@ -671,6 +668,7 @@ const buildQuery = (params) => {
       { normalizedCity: normalize(capitalize(city)) },
       { normalizedCity: capitalize(city) }
     );
+    return query;
   }
   if (ip) {
     query.push({ ip: { $in: [ip] } });
