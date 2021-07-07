@@ -213,7 +213,7 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
 });
 
 app.get("/api/current/location", async (req, res, next) => {
-  const ip = "79.117.248.141" || getIp(req);
+  const ip = getIp(req);
   axios
     .get(`https://ipinfo.io/${ip}?token=${IP_INFO_TOKEN}`)
     .then(async (response) => {
