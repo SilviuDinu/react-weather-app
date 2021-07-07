@@ -357,21 +357,30 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
                 localNames: [],
               };
               res.json(data);
-              updateDB({
-                normalizedCity: normalize(cityName),
-                city: cityName,
-                lat: response.data.results[0].geometry.location.lat,
-                lon: response.data.results[0].geometry.location.lng,
-                geometry: {
-                  type: "Point",
-                  coordinates: [
-                    parseFloat(response.data.results[0].geometry.location.lng),
-                    parseFloat(response.data.results[0].geometry.location.lat),
-                  ],
-                },
-                updates: found ? found.updates : 0,
-                ip: found && !!found.ip.length ? [...found.ip] : [],
-              });
+              const found = await getDBRecord({ city: cityName });
+              if (found) {
+                incrementCityUpdate(found._id);
+              } else {
+                updateDB({
+                  normalizedCity: normalize(cityName),
+                  city: cityName,
+                  lat: response.data.results[0].geometry.location.lat,
+                  lon: response.data.results[0].geometry.location.lng,
+                  geometry: {
+                    type: "Point",
+                    coordinates: [
+                      parseFloat(
+                        response.data.results[0].geometry.location.lng
+                      ),
+                      parseFloat(
+                        response.data.results[0].geometry.location.lat
+                      ),
+                    ],
+                  },
+                  updates: found ? found.updates : 0,
+                  ip: found && !!found.ip.length ? [...found.ip] : [],
+                });
+              }
             })
             .catch((error) => {
               next(error);
@@ -608,7 +617,7 @@ const updateDB = async (data) => {
         );
         console.log(done);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => next(err));
   } catch (err) {
     next(err);
   }
