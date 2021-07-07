@@ -29,6 +29,7 @@ const BASE_URL = process.env.WEATHER_API_BASE_URL;
 const WEATHER_API_GEOCODING = process.env.WEATHER_API_GEOCODING;
 const GEOLOCATION_API_URL = process.env.GEOLOCATION_API_URL;
 const GEOLOCATION_API_KEY = process.env.GEOLOCATION_API_KEY;
+const IP_INFO_TOKEN = process.env.IP_INFO_TOKEN;
 
 const app = express();
 app.enable("trust proxy");
@@ -126,28 +127,19 @@ google.com geocoding api will be called as a fallback.
 */
 app.get("/api/current/coords-to-city", async (req, res, next) => {
   const { lat, lon, sensor = true, retry = false } = req.query;
+  const ip = getIp(req);
   const latlng = [lat, lon].join(",");
   locations.ensureIndex({ geometry: "2dsphere" });
-  const found = await locations.findOne({
-    geometry: {
-      $near: {
-        $geometry: {
-          coordinates: [parseFloat(lon), parseFloat(lat)],
-          type: "Point",
-        },
-        $maxDistance: 5000,
-      },
-    },
-  });
+  const found = await getDBRecord({ lat, lon });
   if (found) {
     res.json({
       lat: found.lat,
       lon: found.lon,
       city: found.city,
       localNames: [],
-      found,
+      exists: true,
     });
-    incrementCityUpdate(found);
+    incrementCityUpdate(found._id);
   } else {
     axios
       .get(
@@ -172,7 +164,8 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
               parseFloat(response.data[0].lat),
             ],
           },
-          updates: found ? found.updates + 1 : 0,
+          updates: found ? found.updates : 0,
+          ip: found && !!found.ip.length ? [...found.ip] : [],
         });
       })
       .catch((error) => {
@@ -207,7 +200,8 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
                       ),
                     ],
                   },
-                  updates: found ? found.updates + 1 : 0,
+                  updates: found ? found.updates : 0,
+                  ip: found && !!found.ip.length ? [...found.ip] : [],
                 });
               })
               .catch((error) => {
@@ -218,51 +212,96 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
   }
 });
 
-app.get("/api/current/location", (req, res, next) => {
-  const ip =
-    req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-
+app.get("/api/current/location", async (req, res, next) => {
+  const ip = "79.117.248.141" || getIp(req);
   axios
-    .get(`http://ip-api.com/json/${ip}`)
-    .then((response) => {
-      res.json({
-        ip: response.data.query,
-        city: response.data.city,
-        cityId: response.data.city_geoname_id || null,
-        region: response.data.regionName,
-        regionCode: response.data.region || null,
-        country: response.data.country,
-        countryCode: response.data.countryCode,
-        continent: response.data.continent || null,
-        continentCode: response.data.continent_code || null,
-        lat: response.data.lat,
-        lon: response.data.lon,
-        time: response.data.current_time || null,
-        isVpn: response.data.security.is_vpn || null,
+    .get(`https://ipinfo.io/${ip}?token=${IP_INFO_TOKEN}`)
+    .then(async (response) => {
+      const { data } = response;
+      const [lat, lon] = data.loc.split(",");
+      const found = await getDBRecord({
+        ip,
+        city: data.city,
       });
+      res.json({
+        ip: data.ip,
+        city: data.city,
+        region: data.region,
+        regionCode: data.region,
+        country: data.country,
+        lat: parseFloat(lat),
+        lon: parseFloat(lon),
+        postal: data.postal,
+        exists: !!found,
+      });
+      if (found) {
+        incrementCityUpdate(found._id);
+        updateIpList(found._id, ip);
+      } else {
+        updateDB({
+          normalizedCity: normalize(data.city),
+          city: data.city,
+          lat: parseFloat(lat),
+          lon: parseFloat(lon),
+          geometry: {
+            type: "Point",
+            coordinates: [parseFloat(lon), parseFloat(lat)],
+          },
+          updates: found ? found.updates : 0,
+          ip: found && !!found.ip.length ? [...found.ip] : [ip],
+        });
+      }
     })
-    .catch((error) => {
+    .catch(async (error) => {
       axios
         .get(
           `https://${GEOLOCATION_API_URL}/?api_key=${GEOLOCATION_API_KEY}&ip_address=${ip}`
         )
-        .then((response) => {
+        .then(async (response) => {
+          const { data } = response;
+          const found = await getDBRecord({
+            ip,
+            city: data.city,
+            lat: parseFloat(data.latitude),
+            lon: parseFloat(data.longitude),
+          });
           res.json({
-            ip: response.data.ip_address,
-            city: response.data.city,
-            cityId: response.data.city_geoname_id,
-            region: response.data.region,
-            regionCode: response.data.region_iso_code,
-            country: response.data.country,
-            countryCode: response.data.country_code,
-            continent: response.data.continent,
-            continentCode: response.data.continent_code,
-            lat: response.data.latitude,
-            lon: response.data.longitude,
-            time: response.data.current_time,
-            isVpn: response.data.security.is_vpn,
+            ip: data.ip_address,
+            city: data.city,
+            exists: !!found,
+            cityId: data.city_geoname_id,
+            region: data.region,
+            regionCode: data.region_iso_code,
+            country: data.country,
+            countryCode: data.country_code,
+            continent: data.continent,
+            continentCode: data.continent_code,
+            lat: data.latitude,
+            lon: data.longitude,
+            time: data.current_time,
+            isVpn: data.security.is_vpn,
             error,
           });
+          if (found) {
+            incrementCityUpdate(found._id);
+            updateIpList(found._id, ip);
+          } else {
+            updateDB({
+              normalizedCity: normalize(data.city),
+              city: data.city,
+              lat: data.latitude,
+              lon: data.longitude,
+              geometry: {
+                type: "Point",
+                coordinates: [
+                  parseFloat(data.longitude),
+                  parseFloat(data.latitude),
+                ],
+              },
+              updates: found ? found.updates : 0,
+              ip: found && !!found.ip.length ? [...found.ip] : [ip],
+            });
+          }
         })
         .catch((error) => {
           next(error);
@@ -277,15 +316,9 @@ from the query string params
 */
 app.get("/api/current/city-to-coords", async (req, res, next) => {
   const { city, countryCode } = req.query;
+  const ip = getIp(req);
   let data;
-  const found = await locations.findOne({
-    $or: [
-      { city },
-      { city: capitalize(city) },
-      { normalizedCity: normalize(capitalize(city)) },
-      { normalizedCity: capitalize(city) },
-    ],
-  });
+  const found = await getDBRecord({ city });
   if (found) {
     data = {
       lat: found.lat,
@@ -293,9 +326,10 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
       city: found.city,
       localNames: [],
       found,
+      exists: true,
     };
     res.json(data);
-    incrementCityUpdate(found);
+    incrementCityUpdate(found._id);
   } else {
     const url = countryCode
       ? encodeURI(
@@ -337,7 +371,8 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
                     parseFloat(response.data.results[0].geometry.location.lat),
                   ],
                 },
-                updates: found ? found.updates + 1 : 0,
+                updates: found ? found.updates : 0,
+                ip: found && !!found.ip.length ? [...found.ip] : [],
               });
             })
             .catch((error) => {
@@ -363,7 +398,8 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
                 parseFloat(response.data[0].lat),
               ],
             },
-            updates: found ? found.updates + 1 : 0,
+            updates: found ? found.updates : 0,
+            ip: found && !!found.ip.length ? [...found.ip] : [],
           });
         }
       })
@@ -392,20 +428,13 @@ app.get("/mockapi/current/city", async (req, res, next) => {
 
 app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
   const { lat, lon } = req.query;
+  const ip = getIp(req);
   const latlng = [lat, lon].join(",");
   let result;
   try {
-    await locations.ensureIndex({ geometry: "2dsphere" });
-    const found = await locations.findOne({
-      geometry: {
-        $near: {
-          $geometry: {
-            coordinates: [parseFloat(lon), parseFloat(lat)],
-            type: "Point",
-          },
-          $maxDistance: 5000,
-        },
-      },
+    const found = await getDBRecord({
+      lat: parseFloat(lat),
+      lon: parseFloat(lon),
     });
     if (!found) {
       result = cityByCoordsOpenweather.find(
@@ -413,15 +442,6 @@ app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
           Math.abs(parseFloat(item.lat, 3) - parseFloat(lat, 3)) < 0.1 &&
           Math.abs(parseFloat(item.lon, 3) - parseFloat(lon, 3)) < 0.1
       );
-    } else {
-      result = cityByCoordsOpenweather.find(
-        (item) =>
-          Math.abs(parseFloat(item.lat, 3) - parseFloat(found.lat, 3)) < 0.1 &&
-          Math.abs(parseFloat(item.lon, 3) - parseFloat(found.lon, 3)) < 0.1
-      );
-    }
-    if (result) {
-      res.json({ ...result, city: result.name, found });
       updateDB({
         normalizedCity: normalize(capitalize(result.name)),
         city: result.name,
@@ -431,8 +451,19 @@ app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
           type: "Point",
           coordinates: [parseFloat(lon), parseFloat(lat)],
         },
-        updates: found ? found.updates + 1 : 0,
+        updates: found ? found.updates : 0,
+        ip: found && !!found.ip.length ? [...found.ip] : [],
       });
+    } else {
+      result = cityByCoordsOpenweather.find(
+        (item) =>
+          Math.abs(parseFloat(item.lat, 3) - parseFloat(found.lat, 3)) < 0.1 &&
+          Math.abs(parseFloat(item.lon, 3) - parseFloat(found.lon, 3)) < 0.1
+      );
+      incrementCityUpdate(found._id);
+    }
+    if (result) {
+      res.json({ ...result, city: result.name, found });
     } else {
       next({ message: "error" });
     }
@@ -441,36 +472,55 @@ app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
   }
 });
 
-app.get("/mockapi/current/location", (req, res, next) => {
-  const ip =
-    req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  try {
-    res.json({
-      ip: ipLocation.ip_address,
+app.get("/mockapi/current/location", async (req, res, next) => {
+  const ip = getIp(req);
+  res.json({
+    ip: ipLocation.ip_address,
+    city: ipLocation.city,
+    cityId: ipLocation.city_geoname_id,
+    region: ipLocation.region,
+    regionCode: ipLocation.region_iso_code,
+    country: ipLocation.country,
+    countryCode: ipLocation.country_code,
+    continent: ipLocation.continent,
+    continentCode: ipLocation.continent_code,
+    lat: ipLocation.latitude,
+    lon: ipLocation.longitude,
+    time: ipLocation.current_time,
+    isVpn: ipLocation.security.is_vpn,
+  });
+  const found = await getDBRecord({
+    ip: ipLocation.ip_address,
+    city: ipLocation.city,
+  });
+  if (found) {
+    incrementCityUpdate(found._id);
+  } else {
+    updateDB({
+      normalizedCity: normalize(ipLocation.city),
       city: ipLocation.city,
-      cityId: ipLocation.city_geoname_id,
-      region: ipLocation.region,
-      regionCode: ipLocation.region_iso_code,
-      country: ipLocation.country,
-      countryCode: ipLocation.country_code,
-      continent: ipLocation.continent,
-      continentCode: ipLocation.continent_code,
       lat: ipLocation.latitude,
       lon: ipLocation.longitude,
-      time: ipLocation.current_time,
-      isVpn: ipLocation.security.is_vpn,
+      geometry: {
+        type: "Point",
+        coordinates: [
+          parseFloat(ipLocation.longitude),
+          parseFloat(ipLocation.latitude),
+        ],
+      },
+      updates: found ? found.updates : 0,
+      ip: found && !!found.ip.length ? [...found.ip] : [ip],
     });
-  } catch (error) {
-    next({ message: error });
   }
 });
 
 app.get("/mockapi/current/city-to-coords", async (req, res, next) => {
   const { city } = req.query;
+  const ip = getIp(req);
   const normalizedCity = normalize(capitalize(city));
   let data;
   try {
-    const found = await locations.findOne({ normalizedCity });
+    const found = await getDBRecord({ city });
     if (!found) {
       const result = coordsByCity.find(
         (item) =>
@@ -485,6 +535,18 @@ app.get("/mockapi/current/city-to-coords", async (req, res, next) => {
         city: result.name,
         localNames: result.local_names,
       };
+      updateDB({
+        normalizedCity,
+        lat: data.lat,
+        lon: data.lon,
+        city: data.city,
+        geometry: {
+          type: "Point",
+          coordinates: [parseFloat(data.lon), parseFloat(data.lat)],
+        },
+        updates: found ? found.updates : 0,
+        ip: found && !!found.ip.length ? [...found.ip] : [],
+      });
     } else {
       data = {
         lat: found.lat,
@@ -492,20 +554,9 @@ app.get("/mockapi/current/city-to-coords", async (req, res, next) => {
         city: found.city,
         localNames: {},
       };
+      incrementCityUpdate(found._id);
     }
-
     data ? res.json(data) : next({ message: "error" });
-    updateDB({
-      normalizedCity,
-      lat: data.lat,
-      lon: data.lon,
-      city: data.city,
-      geometry: {
-        type: "Point",
-        coordinates: [parseFloat(data.lon), parseFloat(data.lat)],
-      },
-      updates: found ? found.updates + 1 : 0,
-    });
   } catch (error) {
     next(error);
   }
@@ -550,12 +601,15 @@ const updateDB = async (data) => {
     schema
       .validate({ ...data })
       .then(async () => {
-        const normalizedCity = normalize(capitalize(data.city));
+        const found = await getDBRecord({ ...data });
         const done = await locations.update(
-          { normalizedCity },
+          found
+            ? { _id: found._id }
+            : { normalizedCity: normalize(capitalize(data.city)) },
           { ...data },
           { upsert: true }
         );
+        console.log(done);
       })
       .catch((err) => console.log(err));
   } catch (err) {
@@ -563,14 +617,65 @@ const updateDB = async (data) => {
   }
 };
 
-const incrementCityUpdate = async (found) => {
-  if (!found) {
+const incrementCityUpdate = async (_id) => {
+  if (!_id) {
     return;
   }
   const done = await locations.findOneAndUpdate(
-    { _id: found._id },
+    { _id },
     { $inc: { updates: 1 } }
   );
+};
+
+const updateIpList = async (_id, ip) => {
+  if (!_id) {
+    return;
+  }
+  const done = await locations.update({ _id }, { $addToSet: { ip } });
+};
+
+const getIp = (req) => {
+  return req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+};
+
+const getDBRecord = async (params) => {
+  const query = buildQuery(params);
+  locations.ensureIndex({ geometry: "2dsphere" });
+  const found = await locations.findOne({
+    $or: [...query],
+  });
+  return found;
+};
+
+const buildQuery = (params) => {
+  const { city, lat, lon, ip } = params;
+  let query = [];
+  if (lat && lon) {
+    query.push({
+      geometry: {
+        $near: {
+          $geometry: {
+            coordinates: [parseFloat(lon), parseFloat(lat)],
+            type: "Point",
+          },
+          $maxDistance: 5000,
+        },
+      },
+    });
+    return query;
+  }
+  if (city) {
+    query.push(
+      { city },
+      { city: capitalize(city) },
+      { normalizedCity: normalize(capitalize(city)) },
+      { normalizedCity: capitalize(city) }
+    );
+  }
+  if (ip) {
+    query.push({ ip: { $in: [ip] } });
+  }
+  return query;
 };
 
 app.get("/*", function (req, res) {

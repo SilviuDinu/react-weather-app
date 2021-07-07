@@ -10,7 +10,9 @@ const schema = yup.object().shape({
     type: yup.string().required(),
     coordinates: yup.array().required(),
   }),
-  updates: yup.number().required()
+  updates: yup.number(),
+  ip: yup.array(),
+  time: yup.date(),
 });
 
 module.exports = { schema };
