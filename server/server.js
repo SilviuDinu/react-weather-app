@@ -346,7 +346,7 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
                 city
               )}&key=${MAPS_API_KEY}`
             )
-            .then((response) => {
+            .then(async (response) => {
               const cityName = response.data.results[0].address_components.find(
                 (component) => component.types.includes("locality")
               ).long_name;
