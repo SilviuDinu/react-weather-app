@@ -129,7 +129,6 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
   const { lat, lon, sensor = true, retry = false } = req.query;
   const ip = getIp(req);
   const latlng = [lat, lon].join(",");
-  locations.ensureIndex({ geometry: "2dsphere" });
   const found = await getDBRecord({ lat, lon });
   if (found) {
     res.json({
@@ -323,7 +322,6 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
       lon: found.lon,
       city: found.city,
       localNames: [],
-      found,
       exists: true,
     };
     res.json(data);
