@@ -14,6 +14,7 @@ const cityByCoordsOpenweather = require("./mocks/city-by-coords-openweather");
 const { schema } = require("./schemas/location");
 const { normalize, capitalize } = require("./helpers/helpers");
 const ipLocation = require("./mocks/ip-location");
+const moment = require("moment");
 require("dotenv").config();
 
 mongoose.connect(process.env.MONGODB_URI, {
@@ -139,6 +140,7 @@ app.get("/api/current/coords-to-city", async (req, res, next) => {
       exists: true,
     });
     incrementCityUpdate(found._id);
+    updateTime(found._id);
   } else {
     axios
       .get(
@@ -235,6 +237,7 @@ app.get("/api/current/location", async (req, res, next) => {
       if (found) {
         incrementCityUpdate(found._id);
         updateIpList(found._id, ip);
+        updateTime(found._id);
       } else {
         updateDB({
           normalizedCity: normalize(data.city),
@@ -282,6 +285,7 @@ app.get("/api/current/location", async (req, res, next) => {
           if (found) {
             incrementCityUpdate(found._id);
             updateIpList(found._id, ip);
+            updateTime(found._id);
           } else {
             updateDB({
               normalizedCity: normalize(data.city),
@@ -326,6 +330,7 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
     };
     res.json(data);
     incrementCityUpdate(found._id);
+    updateTime(found._id);
   } else {
     const url = countryCode
       ? encodeURI(
@@ -358,6 +363,7 @@ app.get("/api/current/city-to-coords", async (req, res, next) => {
               const record = await getDBRecord({ city: cityName });
               if (record) {
                 incrementCityUpdate(record._id);
+                updateTime(found._id);
               } else {
                 updateDB({
                   normalizedCity: normalize(cityName),
@@ -466,6 +472,7 @@ app.get("/mockapi/current/coords-to-city", async (req, res, next) => {
           Math.abs(parseFloat(item.lon, 3) - parseFloat(found.lon, 3)) < 0.1
       );
       incrementCityUpdate(found._id);
+      updateTime(found._id);
     }
     if (result) {
       res.json({ ...result, city: result.name, found });
@@ -499,6 +506,8 @@ app.get("/mockapi/current/location", async (req, res, next) => {
   });
   if (found) {
     incrementCityUpdate(found._id);
+    updateIpList(found._id, ip);
+    updateTime(found._id);
   } else {
     updateDB({
       normalizedCity: normalize(ipLocation.city),
@@ -559,6 +568,7 @@ app.get("/mockapi/current/city-to-coords", async (req, res, next) => {
         localNames: {},
       };
       incrementCityUpdate(found._id);
+      updateTime(found._id);
     }
     data ? res.json(data) : next({ message: "error" });
   } catch (error) {
@@ -601,6 +611,7 @@ const updateDB = async (data) => {
   if (data.updates >= Number.MAX_SAFE_INTEGER) {
     data.updates = 0;
   }
+  data.time = moment().format("LLLL");
   try {
     schema
       .validate({ ...data })
@@ -613,7 +624,6 @@ const updateDB = async (data) => {
           { ...data },
           { upsert: true }
         );
-        console.log(done);
       })
       .catch((err) => next(err));
   } catch (err) {
@@ -635,7 +645,18 @@ const updateIpList = async (_id, ip) => {
   if (!_id) {
     return;
   }
-  const done = await locations.update({ _id }, { $addToSet: { ip } });
+  const done = await locations.findOneAndUpdate({ _id }, { $addToSet: { ip } });
+};
+
+const updateTime = async (_id) => {
+  if (!_id) {
+    return;
+  }
+  const done = await locations.findOneAndUpdate(
+    { _id },
+    { $set: { time: moment().format("LLLL") } },
+    { upsert: true }
+  );
 };
 
 const getIp = (req) => {
