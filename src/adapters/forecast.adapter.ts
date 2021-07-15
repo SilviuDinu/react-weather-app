@@ -114,7 +114,7 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
                     const diffDays = hourTime.diff(currentInfoTime, 'days');
                     return diffDays < 1
                         && diffHours > 0
-                        && diffHours < 6
+                    // && diffHours < 6
 
                 })
                 .map((item: any) => {

@@ -36,6 +36,7 @@ const api = new Api();
 
 export default function Home(props: any) {
   const isMounted = useRef(true);
+  const updates = useRef<NodeJS.Timeout[]>([]);
   const [, setCurrentCity] = useContext(CurrentCityContext);
   const [, setNotification] = useContext(NotificationContext);
   const [loading, setLoading] = useContext(LoadingContext);
@@ -45,6 +46,11 @@ export default function Home(props: any) {
   useEffect(() => {
     return () => {
       isMounted.current = false;
+      updates.current.forEach((update: NodeJS.Timeout, index: number) => {
+        clearTimeout(update);
+        updates.current.splice(index, 1);
+      });
+      setLoading({ isLoading: false });
     };
   }, []);
 
@@ -142,7 +148,30 @@ export default function Home(props: any) {
     } else {
       setWeather((weather: any[]) => [...weather, item]);
     }
+    scheduleUpdate(item, index);
   };
+
+  const scheduleUpdate = (item: Forecast, index: number) => {
+    if (!item) {
+      return;
+    }
+    const { lat, lon, city } = item;
+    if (index > -1) {
+      clearTimeout(updates.current[index]);
+      updates.current.splice(index, 1);
+      const promise = setTimeout(() => {
+        const loadingId = getLoadingId(weather, city);
+        setLoading({
+          isLoading: true,
+          id: loadingId,
+          isNext: !weather[loadingId],
+        });
+        retrieveWeatherData({ lat, lon, city });
+      }, 3000);
+      updates.current.push(promise);
+      console.log(updates.current)
+    }
+  }
 
   const handleErr = (message: MESSAGES, err?: any): void => {
     setNotification({

@@ -25,7 +25,8 @@
       height: 100%;
       background-size: auto;
       flex-direction: column;
-      padding: 8px;
+      // padding: 8px;
+      margin: 8px 0px;
       align-items: center;
       align-content: center;
     }
@@ -50,7 +51,7 @@
         width: 100%;
         height: 100%;
         flex-direction: column;
-        padding: 8px;
+        padding: 0px;
         align-items: center;
         align-content: center;
       }
@@ -62,30 +63,30 @@
 
     &.clear-sky {
       background-image: url("../../media/images/forecast/clear_sky.png");
-      background-size: auto;
-      @include animate(clearSky, 0%, 50%, 100%, 60%, 0%, 25%, 600s);
+      background-size: cover;
 
-      @media screen and (max-width: 768px) {
+      @media screen and (min-width: 992px) {
+        @include animate(clearSky, 0%, 50%, 100%, 60%, 0%, 25%, 600s);
         background-size: auto;
       }
     }
 
     &.overcast-clouds {
       background-image: url("../../media/images/forecast/overcast_clouds.png");
-      background-size: auto;
-      @include animate(overcastClouds, 0%, 100%, 100%, 100%, 0%, 80%, 800s);
+      background-size: cover;
 
-      @media screen and (max-width: 768px) {
+      @media screen and (min-width: 992px) {
+        @include animate(overcastClouds, 0%, 100%, 100%, 100%, 0%, 80%, 800s);
         background-size: auto;
       }
     }
 
     &.few-clouds {
       background-image: url("../../media/images/forecast/few_clouds.png");
-      background-size: auto;
-      @include animate(fewClouds, 0%, 90%, 100%, 60%, 0%, 25%, 600s);
+      background-size: cover;
 
-      @media screen and (max-width: 768px) {
+      @media screen and (min-width: 992px) {
+        @include animate(fewClouds, 0%, 90%, 100%, 60%, 0%, 25%, 600s);
         background-size: auto;
       }
     }
@@ -95,7 +96,10 @@
       background-image: url("../../media/images/forecast/rain.png"),
         url("../../media/images/forecast/overcast_clouds.png");
       background-size: 200% 200%, auto;
-      @include animate(moderateRain, 0%, 100%, 0%, 50%, 0%, 0%, 300s);
+
+      @media screen and (min-width: 992px) {
+        @include animate(moderateRain, 0%, 100%, 0%, 50%, 0%, 0%, 300s);
+      }
 
       @media screen and (max-width: 768px) {
         background-size: auto;
@@ -104,26 +108,26 @@
 
     &.broken-clouds {
       background-image: url("../../media/images/forecast/broken_clouds.png");
-      background-size: auto;
-      @include animate(brokenClouds, 0%, 90%, 100%, 60%, 0%, 25%, 600s);
+      background-size: cover;
 
-      @media screen and (max-width: 768px) {
+      @media screen and (min-width: 992px) {
+        @include animate(brokenClouds, 0%, 90%, 100%, 60%, 0%, 25%, 600s);
         background-size: auto;
       }
     }
 
     &.scattered-clouds {
       background-image: url("../../media/images/forecast/broken_clouds.png");
-      background-size: auto;
-      @include animate(scatteredClouds, 0%, 90%, 100%, 60%, 0%, 25%, 600s);
+      background-size: cover;
 
-      @media screen and (max-width: 768px) {
+      @media screen and (min-width: 992px) {
+        @include animate(scatteredClouds, 0%, 90%, 100%, 60%, 0%, 25%, 600s);
         background-size: auto;
       }
     }
 
     .weather-card-accordion-summary {
-      padding: 0px;
+      // padding: 0px;
       display: flex;
       flex-direction: column;
 
@@ -202,7 +206,7 @@
       }
 
       @media (max-width: 600px) {
-        width: 95%;
+        width: 100%;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-around;
@@ -211,6 +215,10 @@
       .weather-card-sunrise,
       .weather-card-sunset {
         margin-top: 16px;
+
+        @media screen and (max-width: 767px) {
+          flex: 0 0 33%;
+        }
       }
     }
     .weather-card-overview {
@@ -237,7 +245,6 @@
           width: 65px;
           height: auto;
           margin: 0 8px 0 -8px;
-
 
           // &._01d,
           // &._01n {

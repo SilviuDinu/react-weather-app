@@ -11,7 +11,7 @@ export default function HourlyForecastInfo(props: any) {
 
   return (
     <div className="hourly-weather-info">
-      <div className="hourly-weather-temp-wrapper">
+      <div className="hourly-weather-temp-wrapper" tabIndex={0}>
         {data.map((hour: ForecastInfo, idx: number): any => {
           return (
             <div key={idx} className="hourly-weather-temp-item">

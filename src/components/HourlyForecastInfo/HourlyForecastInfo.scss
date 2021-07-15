@@ -5,14 +5,62 @@
       width: 100%;
       flex-direction: row;
       flex-wrap: wrap;
-      width: 100%;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      -ms-overflow-style: none; /* for Internet Explorer, Edge */
+      scrollbar-width: none; /* for Firefox */
+      padding-bottom: 8px;
+
+      &::-webkit-scrollbar {
+        width: 8px;
+        height: 6px;
+      }
+
+      /* Track */
+      &::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px darkgrey;
+        border-radius: 10px;
+        height: 6px;
+      }
+
+      /* Handle */
+      &::-webkit-scrollbar-thumb {
+        background: rgba(193, 193, 193, 0.5);
+        border-radius: 10px;
+        height: 6px;
+      }
+
+      /* Handle on hover */
+      &::-webkit-scrollbar-thumb:hover {
+        background: rgba(50, 50, 50, 0.5);
+      }
+
       .hourly-weather-temp-wrapper {
         display: flex;
         width: 100%;
         flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        flex-wrap: nowrap;
+        justify-content: stretch;
         align-items: center;
+        white-space: nowrap;
+        padding-bottom: 8px;
+
+        .temp-hot {
+          margin-right: 4px;
+        }
+
+        // &::-webkit-scrollbar {
+        //   color: rgba(255, 255, 255, 1);
+        //   z-index: 1;
+        //   height: 10px;
+        //   width: auto;
+        //   border-radius: 50px;
+        // }
+
+        // &::-webkit-scrollbar-track {
+        //   box-shadow: inset 0 0 5px grey;
+        //   border-radius: 10px;
+        // }
 
         .hourly-weather-temp {
           margin-top: 8px;
@@ -33,6 +81,12 @@
           display: flex;
           flex-direction: column;
           align-items: center;
+          // flex: 0 0 22%;
+          margin-right: 48px;
+
+          @media screen and (max-width: 767px) {
+            margin-right: 32px;
+          }
 
           .weather-card-icon {
             @media (max-width: 992px) {
@@ -53,7 +107,6 @@
           }
         }
       }
-
       .temp-chart {
         width: 100%;
         height: auto;

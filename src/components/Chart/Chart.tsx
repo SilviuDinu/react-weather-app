@@ -6,8 +6,9 @@ export default function Chart(props: any) {
     <div className="temp-chart">
       <Sparklines
         data={[...data]}
-        width={100}
-        height={15}
+        width={data.length * 100}
+        svgWidth={data.length * 22}
+        height={data.length * 15}
         min={min / 2}
         max={Math.max(...data)}
       >
