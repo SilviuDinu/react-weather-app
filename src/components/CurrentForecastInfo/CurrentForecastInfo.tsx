@@ -4,6 +4,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import { useContext } from 'react';
 import { CurrentCityContext } from '@providers/CurrentCityContext';
 import { normalize, capitalize } from '@utils/helpers';
+import CardField from '@components/CardField/CardField';
 
 export default function CurrentForecastInfo(props: any) {
   const { data } = props;
@@ -11,6 +12,18 @@ export default function CurrentForecastInfo(props: any) {
 
   const isCurrentCity = (city: string): boolean => {
     return city === currentCity || normalize(capitalize(city)) === normalize(capitalize(currentCity));
+  }
+
+  const isMisty = (description: string): boolean => {
+    return description === 'mist' || description.includes('mist');
+  }
+
+  const isLowVisibility = (v: number): boolean => {
+    return v < 5000;
+  }
+
+  const isHumidityHigh = (h: number): boolean => {
+    return h > 65;
   }
 
   return (
@@ -37,49 +50,72 @@ export default function CurrentForecastInfo(props: any) {
           {capitalize(data?.weather?.description)}
         </span>
       </div>
-      <div className="weather-card-temp-wrapper">
-        <span className="weather-card-temp high">
-          {/* <img
-            src={require(`@media/images/temperature/hot.svg`).default}
-            className="temp-hot"
-            width="30"
-            height="auto"
-            alt="logo"
-          /> */}
-          {`Max: ${parseInt(data?.temperature?.max)}`}
-          {SYMBOLS.CELSIUS}
-        </span>
-        <span className="weather-card-temp low">
-          {/* <img
-            src={require(`@media/images/temperature/cold.svg`).default}
-            className="temp-hot"
-            width="30"
-            height="auto"
-            alt="logo"
-          /> */}
-          {`Min: ${parseInt(data?.temperature?.min)}`}
-          {SYMBOLS.CELSIUS}
-        </span>
-        <span className="weather-card-temp humidity">
-          {/* <img
-            src={require(`@media/images/temperature/humidity.svg`).default}
-            className="temp-humidity"
-            width="30"
-            height="auto"
-            alt="logo"
-          /> */}
-          {`Humidity: ${data?.humidity}%`}</span>
+      <div className="weather-card-section">
+        <div className="weather-card-temp-wrapper">
+          <span className="weather-card-temp high">
+            <CardField
+              label="Max"
+              value={parseInt(data?.temperature?.max)}
+              valueSymbol={SYMBOLS.CELSIUS}
+            />
+          </span>
+          <span className="weather-card-temp low">
+            <CardField
+              label="Min"
+              value={parseInt(data?.temperature?.min)}
+              valueSymbol={SYMBOLS.CELSIUS}
+            />
+          </span>
+          <span className="weather-card-temp uv-index">
+            <CardField
+              label="UV"
+              value={(data?.uvIndex).toFixed(1)}
+            />
+          </span>
+          {isHumidityHigh(data?.humidity)
+            ? <span className="weather-card-temp humidity">
+              <CardField
+                label="Humidity"
+                value={data?.humidity}
+                valueSymbol="%"
+              />
+            </span>
+            : null}
+
+        </div>
       </div>
-      <div className="weather-card-sunrise-sunset">
-        <span className="weather-card-sunrise">{`Sunrise: ${data?.sunrise.format(
-          "HH:mm"
-        )}`}</span>
-        <span className="weather-card-sunset">{`Sunset: ${data?.sunset.format(
-          "HH:mm"
-        )}`}</span>
-        <span className="weather-card-disclaimer">
-          {MISC.LOCAL_TIMEZONE_DISCLAIMER}
-        </span>
+      <div className="weather-card-section">
+        <div className="weather-card-general-info">
+          <span className="weather-card-temp">
+            <CardField
+              label="Sunrise"
+              value={data?.sunrise.format("HH:mm")}
+            />
+          </span>
+          <span className="weather-card-temp">
+            <CardField
+              label="Sunset"
+              value={data?.sunset.format("HH:mm")}
+            />
+          </span>
+          <span className="weather-card-temp">
+            <CardField
+              label="Wind"
+              value={(data?.wind?.speed * 3600 / 1000).toFixed(1)}
+              valueSymbol="km/h"
+            />
+          </span>
+          {!isMisty(data?.weather?.description) || isLowVisibility(data?.visibility)
+            ?
+            <span className="weather-card-temp">
+              <CardField
+                label="Visibility"
+                value={(data?.visibility / 1000).toFixed(1)}
+                valueSymbol="km"
+              />
+            </span>
+            : null}
+        </div>
       </div>
     </div>
   );

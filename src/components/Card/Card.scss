@@ -57,7 +57,9 @@
       }
     }
 
-    .weather-card-disclaimer {
+    .weather-card-disclaimer,
+    .weather-card-wind-speed,
+    .weather-card-mist {
       margin-top: 16px;
     }
 
@@ -126,6 +128,26 @@
       }
     }
 
+    .weather-card-field-wrapper {
+      margin-top: 16px;
+      align-items: center;
+    }
+
+    .weather-card-field-value {
+      font-weight: 500;
+    }
+
+    .weather-card-field-label {
+      margin-right: 4px;
+      font-weight: 300;
+    }
+
+    @media screen and (max-width: 767px) {
+      .MuiAccordionSummary-root {
+        padding: 0;
+      }
+    }
+
     .weather-card-accordion-summary {
       // padding: 0px;
       display: flex;
@@ -133,7 +155,7 @@
 
       .summary {
         display: flex;
-        padding: 0;
+        padding: 0 !important;
         margin: 0;
         width: 100%;
         justify-content: space-between;
@@ -152,6 +174,13 @@
       }
     }
 
+    .weather-card-section {
+      width: 100%;
+      display: flex;
+      justify-content: stretch;
+      align-items: center;
+    }
+
     .weather-card-title,
     .weather-card-description {
       mix-blend-mode: difference;
@@ -163,19 +192,43 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      mix-blend-mode: difference;
-      filter: contrast(0.3);
+      width: 100%;
 
       .weather-card-temp {
-        margin-top: 16px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        // mix-blend-mode: difference;
+        // filter: contrast(0.3);
+
+        // &:not(.uv-index) {
+        //   mix-blend-mode: difference;
+        //   filter: contrast(0.3);
+        // }
+
+        // &.uv-index {
+        //   span {
+        //     mix-blend-mode: difference;
+        //     filter: contrast(0.3);
+        //   }
+        // }
+
+        & > .temp-uv-index {
+          margin-right: 4px;
+
+          @media screen and (max-width: 992px) {
+            margin-left: 4px;
+          }
+        }
       }
 
       @media (max-width: 768px) {
-        width: 95%;
+        width: 100%;
         flex-direction: row;
         align-items: center;
         flex-wrap: wrap;
-        justify-content: space-evenly;
+        justify-content: space-between;
         margin-bottom: 16px;
       }
 
@@ -188,30 +241,43 @@
       // }
     }
 
-    .weather-card-sunrise-sunset {
+    .weather-card-general-info {
       display: flex;
       flex-direction: column;
-      mix-blend-mode: difference;
       align-items: flex-end;
-      filter: contrast(0.3);
+      // mix-blend-mode: difference;
+      // filter: contrast(0.3);
+      width: 100%;
 
-      @media (max-width: 768px) {
-        width: 95%;
-        flex-wrap: wrap;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        align-content: center;
-        justify-self: center;
-      }
-
-      @media (max-width: 600px) {
+      @media (max-width: 769px) {
         width: 100%;
+        display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-around;
+        align-items: center;
+        align-content: center;
       }
 
+      @media (max-width: 400px) {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        align-items: center;
+        align-content: center;
+      }
+
+      @media (max-width: 992px) {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        align-content: center;
+      }
       .weather-card-sunrise,
       .weather-card-sunset {
         margin-top: 16px;

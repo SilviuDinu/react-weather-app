@@ -37,7 +37,7 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
             lon,
             data.timezone,
             new ForecastInfo(
-                moment.unix(data.dt),
+                moment.unix(data.dt).utcOffset(data.timezone / 60),
                 new TemperatureInfo(
                     main.temp,
                     main.temp_min,
@@ -57,8 +57,8 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
                     weather[0].main,
                     weather[0].description,
                     weather[0].icon),
-                moment.unix(sys.sunrise),
-                moment.unix(sys.sunset),
+                moment.unix(sys.sunrise).utcOffset(data.timezone / 60),
+                moment.unix(sys.sunset).utcOffset(data.timezone / 60),
             )
         );
     }
@@ -144,7 +144,7 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
             return [];
         }
         return new ForecastInfo(
-            moment.unix(current.dt),
+            moment.unix(current.dt).utcOffset(data.timezone_offset / 60),
             this.getTemperatureInfo(current.temp, TEMP_TYPE.CURRENT, data),
             current.feels_like,
             current.pressure,
@@ -153,8 +153,8 @@ export class ForecastAdapter implements Adapter<Forecast[]> {
             current.visibility,
             this.getWindInfo(current) || {},
             this.getWeatherInfo(current.weather[0]),
-            moment.unix(current.sunrise),
-            moment.unix(current.sunset),
+            moment.unix(current.sunrise).utcOffset(data.timezone_offset / 60),
+            moment.unix(current.sunset).utcOffset(data.timezone_offset / 60),
             this.getRainInfo(current.rain),
             current.uvi,
             current.dew_point,

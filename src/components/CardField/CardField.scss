@@ -1,0 +1,19 @@
+.weather-card-field-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+
+  @media screen and (max-width: 992px) {
+    flex-direction: column;
+  }
+
+  &.horizontal {
+    flex-direction: row;
+  }
+
+  &.vertical {
+    flex-direction: column;
+  }
+}

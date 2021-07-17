@@ -35,6 +35,14 @@
         background: rgba(50, 50, 50, 0.5);
       }
 
+      @media screen and (max-width: 600px) {
+        &::-webkit-scrollbar,
+        &::-webkit-scrollbar-track,
+        &::-webkit-scrollbar-thumb {
+          display: none;
+        }
+      }
+
       .hourly-weather-temp-wrapper {
         display: flex;
         width: 100%;
@@ -86,6 +94,10 @@
 
           @media screen and (max-width: 767px) {
             margin-right: 32px;
+          }
+
+          @media screen and (max-width: 400px) {
+            margin-right: 16px;
           }
 
           .weather-card-icon {
